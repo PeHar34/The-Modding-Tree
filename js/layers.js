@@ -53,6 +53,6 @@ addLayer("p", {
         14: {
             title: "Juts points multi",
             description: "x5 points",
-            cost: new Decimal(5),
+            cost: new Decimal(25),
         },
 }})
