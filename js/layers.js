@@ -50,4 +50,9 @@ addLayer("p", {
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
+        14: {
+            title: "Juts points multi",
+            description: "x5 points",
+            cost: new Decimal(5),
+        },
 }})
