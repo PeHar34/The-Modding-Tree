@@ -18,6 +18,9 @@ addLayer("p", {
         if (hasUpgrade('p', 13)) mult = mult.times(upgradeEffect('p', 13))
         return mult
     },
+    passiveGeneration() {
+        if (hasUpgrade("p", 15)) return 0.1
+    },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
@@ -54,5 +57,10 @@ addLayer("p", {
             title: "Juts points multi",
             description: "x5 points",
             cost: new Decimal(20),
+        },
+        15: {
+            title: "Automation",
+            description: "You gain 10% of your PP gain per second",
+            cost: new Decimal(50),
         },
 }})
