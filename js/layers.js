@@ -130,7 +130,7 @@ addLayer("p", {
         41: {
             unlocked() {return hasUpgrade(this.layer, 35)},
             title: "Kirill?",
-            description: "Unlock Kirill(not currently in game)",
+            description: "Unlocks Kirill",
             cost: new Decimal(100000),
         },
     },
