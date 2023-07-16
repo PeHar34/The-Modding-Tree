@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.0",
+	num: "0.3.1",
 	name: "2 prestige layers"
 }
 
