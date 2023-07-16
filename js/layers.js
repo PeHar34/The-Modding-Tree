@@ -13,7 +13,7 @@ addLayer("p", {
         if(hasMilestone("k", 1))keep.push(31, 32, 33, 34, 35, 41)
         if(layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep) 
 
-        player[this.layer].upgrades = keep
+        if(layers[resettingLayer].row > this.row) player[this.layer].upgrades = keep
     },
     color: "#4BDC13",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
