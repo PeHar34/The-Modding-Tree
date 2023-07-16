@@ -21,13 +21,19 @@ addLayer("p", {
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
+    exponent() {
+        exponent = 0.5
+        if (hasUpgrade("k", 32)) exponent = 0.7
+        return exponent
+    },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('p', 13)) mult = mult.times(upgradeEffect('p', 13))
         if (hasUpgrade('p', 32)) mult = mult.times(10)
         if (hasUpgrade('k', 11)) mult = mult.times(2)
+        if (hasUpgrade("k", 35)) mult = mult.times(upgradeEffect("k", 35))
         if (hasUpgrade('k', 12)) mult = mult.times(2)
+        nult = mult.times(buyableEffect("k", 11))
         if (hasUpgrade("k", 14)) mult = mult.times(upgradeEffect("k", 14))
         if (hasUpgrade('k', 13)) mult = mult.times(100)
         if (hasUpgrade('p', 34)) mult = mult.pow(1.1)
@@ -36,6 +42,7 @@ addLayer("p", {
     },
     passiveGeneration() {
         if (hasUpgrade("p", 15)) return 0.1
+        if (hasMilestone("k", 2)) return 1
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
@@ -54,20 +61,24 @@ addLayer("p", {
         12: {
             unlocked() {return hasUpgrade(this.layer, 11)},
             title: "Useful PP",
-            description: "Points get boost based on PP(hardcaps at x1000000)",
+            description: "Points get boost based on PP",
             cost: new Decimal(3),
             effect() {
-                return player[this.layer].points.add(1).pow(0.5).min(1000000)
+                hardcap = new Decimal("1e6")
+                if (hasUpgrade("k", 31)) hardcap = new Decimal("1e100")
+                return player[this.layer].points.add(1).pow(0.5).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
         13: {
             unlocked() {return hasUpgrade(this.layer, 12)},
             title: "Useful points",
-            description: "PP get boost based on points(hardcaps at x100)",
+            description: "PP get boost based on points",
             cost: new Decimal(5),
             effect() {
-                return player.points.add(1).pow(0.15).min(100)
+                hardcap = new Decimal("100")
+                if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
+                return player.points.add(1).pow(0.15).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
@@ -84,7 +95,10 @@ addLayer("p", {
             cost: new Decimal(50),
         },
         21: {
-            unlocked() {return hasUpgrade(this.layer, 15)},
+            unlocked() {
+                if (hasUpgrade(this.layer, 21)) return false
+                else return hasUpgrade(this.layer, 15)
+            },
             title: "2nd row",
             description: "unlock 2nd row of PP upgrades",
             cost: new Decimal(50),
@@ -92,43 +106,50 @@ addLayer("p", {
         31: {
             unlocked() {return hasUpgrade(this.layer, 21)},
             title: "Useful points 2",
-            description: "points get boost based on points(hardcaps at x100)",
+            description: "points get boost based on points",
             cost: new Decimal(100),
             effect() {
-                return player.points.add(1).pow(0.1).min(100)
+                hardcap = new Decimal("100")
+                if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
+                return player.points.add(1).pow(0.1).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
         32: {
-            unlocked() {return hasUpgrade(this.layer, 31)},
+            unlocked() {return hasUpgrade(this.layer, 21)},
             title: "Just PP multi",
             description: "x10 to PP gain",
             cost: new Decimal(300),
         },
         33: {
-            unlocked() {return hasUpgrade(this.layer, 32)},
+            unlocked() {return hasUpgrade(this.layer, 21)},
             title: "Ultimate points",
             description: "points ^1.1",
             cost: new Decimal(3000),
         },
         34: {
-            unlocked() {return hasUpgrade(this.layer, 33)},
+            unlocked() {return hasUpgrade(this.layer, 21)},
             title: "Ultimate PP",
             description: "PP ^1.1",
             cost: new Decimal(10000),
         },
         35: {
-            unlocked() {return hasUpgrade(this.layer, 34)},
+            unlocked() {return hasUpgrade(this.layer, 21)},
             title: "PP buff",
-            description: "PP boost PP gain(hardcaps at x100)",
+            description: "PP boost PP gain",
             cost: new Decimal(50000),
             effect() {
-                return player.points.add(1).pow(0.1).min(100)
+                hardcap = new Decimal("100")
+                if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
+                return player.points.add(1).pow(0.1).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
         41: {
-            unlocked() {return hasUpgrade(this.layer, 35)},
+            unlocked() {
+                if (hasUpgrade(this.layer, 41)) return false
+                else return hasUpgrade(this.layer, 35)
+            },
             title: "Kirill?",
             description: "Unlocks Kirill",
             cost: new Decimal(100000),
@@ -151,7 +172,11 @@ addLayer("k", {
     baseResource: "prestige points",
     baseAmount() {return player.p.points},
     type: "static",
-    exponent: 3,
+    exponent() {
+        exponent = 3
+        if (hasUpgrade("k", 34)) exponent = 2.862
+        return exponent
+    },
     gainMult() {
         mult = new Decimal(1)
         return mult
@@ -181,7 +206,9 @@ addLayer("k", {
             description: "points boost based on IQ",
             cost: new Decimal(3),
             effect() {
-                return player[this.layer].points.add(1).pow(4)
+                IQB = new Decimal("4")
+                if (hasUpgrade(this.layer, 33)) IQB = 15
+                return player[this.layer].points.add(1).pow(IQB)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
@@ -191,16 +218,70 @@ addLayer("k", {
             description: "boost PP based on IQ",
             cost: new Decimal(4),
             effect() {
-                return player[this.layer].points.add(1).pow(4)
+                IQB = new Decimal("4")
+                if (hasUpgrade(this.layer, 33)) IQB = 15
+                return player[this.layer].points.add(1).pow(IQB)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
         },
         21: {
-            unlocked() {return hasUpgrade("k", 15)},
+            unlocked() {
+                if (hasUpgrade(this.layer, 21)) return false
+                else return hasUpgrade(this.layer, 15)
+            },
             title: "Something new",
-            description: "Unlocks buyable(not currently in game)",
-            tooltip: "Слишком сложная хуйня, я не вывез пока что",
+            description: "Unlocks kirill buyable",
             cost: new Decimal(4),
+        },
+        22: {
+            unlocked() {
+                if (hasUpgrade(this.layer, 22)) return false
+                else return hasMilestone(this.layer, 1)
+            },
+            title: "Something new v2",
+            description: "Unlocks 2nd row of Kirill upgrades",
+            cost: new Decimal(5),
+        }, 
+        31: {
+            unlocked() {return hasUpgrade(this.layer, 22)},
+            title: "Return",
+            description: "2nd PP upgrade hardcap now 1e100, other hardcaps now 1e15",
+            cost: new Decimal(5),
+        },
+        32: {
+            unlocked() {return hasUpgrade(this.layer, 22)},
+            title: "Stupid Formula",
+            description: "Prestige formula better",
+            tooltip: "С вашим IQ вы не можете понять престиж формулу, поэтому она теперь легче",
+            cost: new Decimal(6),
+        },
+        33: {
+            unlocked() {return hasUpgrade(this.layer, 22)},
+            title: "Really Really needed IQ",
+            description: "needed IQ and Really needed IQ better",
+            cost: new Decimal(8),
+        },
+        34: {
+            unlocked() {return hasUpgrade(this.layer, 22)},
+            title: "Stupid formula 2",
+            description: "IQ formula slightly better",
+            tooltip: "У вас чуть больше IQ, но всё ещё недостаточно, чтобы понять IQ формулу, поэтому она теперь легче",
+            cost: new Decimal(9),
+        },
+        35: {
+            unlocked() {return hasUpgrade(this.layer, 22)},
+            title: "Super Buyable",
+            description: "Number of buyable purchases boosts PP",
+            effect() {
+                return getBuyableAmount(this.layer, 11).add(1).pow(37)
+            },
+            cost: new Decimal(10),
+        },
+        41: {
+            unlocked() {return hasUpgrade(this.layer, 35)},
+            title: "Papa",
+            description: "Unlocks money making(not currently in game)",
+            cost: new Decimal(11),
         },
     },
     milestones: {
@@ -216,14 +297,21 @@ addLayer("k", {
             effectDescription: "save 2nd row PP upgrades",
             done() { return player.k.points.gte(5) },
         },
+        2: {
+            unlocked() {return hasUpgrade(this.layer, 34)},
+            requirementDescription: "10 IQ",
+            effectDescription: "You gain 100% of your PP gain per second",
+            done() { return player.k.points.gte(10) },
+        },
     },
     buyables: {
         11: {
             title: "Roblox",
-            unlocked() {return false},
+            unlocked() {return hasUpgrade("k", 21)},
             cost(x) { return new Decimal(3).add(x) },
             display() { return "Waste your IQ on roblox(roblox makes you more powerful)" },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
+            purchaseLimit: "10",
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -231,15 +319,15 @@ addLayer("k", {
             display() { 
                 let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " IQ\n\
-                Amount: " + player[this.layer].buyables[this.id] + "/3\n\
-                Multiply points gain by" + format(data.effect.first) + "and multiplies PP by " + format(data.effect.second)
+                Amount: " + player[this.layer].buyables[this.id] + "/10\n\
+                Gain " + format(data.effect) + "x more points and multiplies PP by " + format(data.effect) +"x"
             },
-            effect(x) { // Effects of owning x of the items, x is a decimal
-                let eff = {}
-                this.effect.first = 10**(3*x)
-                this.effect.second = 10**(3*x)
-                return eff;
-            },
+            effect(x) { 
+                eff = new Decimal("100000")
+                eff = eff.pow(x)
+                return eff
+            }, 
+            effectDisplay(x) { return format(buyableEffect(this.layer, this.id))+"x" },
         },
     },
 })

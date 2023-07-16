@@ -18,9 +18,12 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.2</h3><br>
-		- Added Kirill.<br>
-		- Added new features.<br>`
+	<h3>v0.3.1</h3><br>
+		- Added more upgrades.<br>
+		- Added Buyable.<br>
+		- Added new Milestone.<br>
+		- Added some design.<br>
+		- Added more QoL.<br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -44,6 +47,7 @@ function getPointGen() {
 	let gain = new Decimal(1)
 	if (hasUpgrade("p", 11)) gain = gain.times(2)
 	if (hasUpgrade('k', 11)) gain = gain.times(2)
+	gain = gain.times(buyableEffect("k", 11))
 	if (hasUpgrade('k', 12)) gain = gain.times(2)
 	if (hasUpgrade("p", 12)) gain = gain.times(upgradeEffect("p", 12))
 	if (hasUpgrade("p", 31)) gain = gain.times(upgradeEffect("p", 31))
