@@ -453,7 +453,7 @@ addLayer("m", {
             unlocked() {return true},
             title: "Hire worker",
             description: "You now have mafia worker",
-            tooltip: "Вы наняли первого работника! Поздровляю!",
+            tooltip: "Вы наняли первого работника! Поздравляю!",
             cost: new Decimal(1),
         },
         12: {
