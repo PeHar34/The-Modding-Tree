@@ -13,17 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1",
-	name: "2 prestige layers"
+	num: "0.3.2",
+	name: "Money making"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.3.1</h3><br>
-		- Added more upgrades.<br>
-		- Added Buyable.<br>
-		- Added new Milestone.<br>
-		- Added some design.<br>
-		- Added more QoL.<br>`
+	<h3>v0.3.2</h3><br>
+		- Added money making.<br>
+		- Added new mechanic.<br>
+		- Added new upgrades.<br>
+		- And blah blah blah blah.<br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -53,6 +52,8 @@ function getPointGen() {
 	if (hasUpgrade("p", 31)) gain = gain.times(upgradeEffect("p", 31))
 	if (hasUpgrade("k", 14)) gain = gain.times(upgradeEffect("k", 14))
 	if (hasUpgrade("p", 14)) gain = gain.times(5)
+	if (hasUpgrade("m", 12)) gain = gain.times(upgradeEffect("m", 12))
+	if (hasUpgrade("m", 34)) gain = gain.times(upgradeEffect("m", 34))
 	if (hasUpgrade("p", 33)) gain = gain.pow(1.1)
 	return gain
 }

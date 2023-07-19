@@ -35,6 +35,9 @@ addLayer("p", {
         if (hasUpgrade('k', 12)) mult = mult.times(2)
         nult = mult.times(buyableEffect("k", 11))
         if (hasUpgrade("k", 14)) mult = mult.times(upgradeEffect("k", 14))
+        if (hasUpgrade("k", 55)) mult = mult.times(1e30)
+        if (hasUpgrade("m", 15)) mult = mult.times(upgradeEffect("m", 15))
+        if (hasUpgrade("m", 13)) mult = mult.times(upgradeEffect("m", 13))
         if (hasUpgrade('k', 13)) mult = mult.times(100)
         if (hasUpgrade('p', 34)) mult = mult.pow(1.1)
         if (hasUpgrade('p', 35)) mult = mult.times(upgradeEffect("p", 35))
@@ -66,6 +69,7 @@ addLayer("p", {
             effect() {
                 hardcap = new Decimal("1e6")
                 if (hasUpgrade("k", 31)) hardcap = new Decimal("1e100")
+                if (hasUpgrade("k", 53)) hardcap = new Decimal("1e300")
                 return player[this.layer].points.add(1).pow(0.5).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -78,6 +82,7 @@ addLayer("p", {
             effect() {
                 hardcap = new Decimal("100")
                 if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
+                if (hasUpgrade("k", 54)) hardcap = new Decimal("1e200")
                 return player.points.add(1).pow(0.15).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -111,6 +116,7 @@ addLayer("p", {
             effect() {
                 hardcap = new Decimal("100")
                 if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
+                if (hasUpgrade("k", 54)) hardcap = new Decimal("1e200")
                 return player.points.add(1).pow(0.1).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -275,13 +281,72 @@ addLayer("k", {
             effect() {
                 return getBuyableAmount(this.layer, 11).add(1).pow(37)
             },
+            effectDisplay() { return format(upgradeEffect(this.layer, 35))+"x" },
             cost: new Decimal(10),
         },
         41: {
-            unlocked() {return hasUpgrade(this.layer, 35)},
+            unlocked() {
+                if (hasUpgrade(this.layer, 41)) return false
+                else return hasUpgrade(this.layer, 35)
+            },
             title: "Papa",
-            description: "Unlocks money making(not currently in game)",
+            description: "Unlocks money making",
             cost: new Decimal(11),
+        },
+        42: {
+            unlocked() {
+                if (hasUpgrade(this.layer, 42)) return false
+                else return hasUpgrade("m", 13)
+            },
+            title: "3rd row",
+            description: "Unlocks 3rd row of IQ upgrades",
+            cost: new Decimal(12),
+        },
+        51: {
+            unlocked() {
+                return hasUpgrade(this.layer, 42)
+            },
+            title: "IQ is good",
+            description: "IQ boosts mafia XP",
+            tooltip: "Айкью действительно влияет на устройство мафии, чем вы умнее, тем больше мафия будет процветать!",
+            cost: new Decimal(12),
+            effect() {
+                return new Decimal(player[this.layer].points).pow(3)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 51))+"x" },
+        },
+        52: {
+            unlocked() {
+                return hasUpgrade(this.layer, 42)
+            },
+            title: "Mafia buff",
+            description: "Just x5 mafia XP",
+            cost: new Decimal(15),
+        },
+        53: {
+            unlocked() {
+                return hasUpgrade(this.layer, 42)
+            },
+            title: "hardcap? what is this?",
+            description: "Useful PP harcap 1e100 -> 1e300",
+            cost: new Decimal(16),
+        },
+        54: {
+            unlocked() {
+                return hasUpgrade(this.layer, 42)
+            },
+            title: "hardcap? what is this? Again?",
+            description: "Useful points and Useful points 2 harcap 1e15 -> 1e200 also money using harcap higher",
+            cost: new Decimal(19),
+        },
+        55: {
+            unlocked() {
+                return hasUpgrade(this.layer, 42)
+            },
+            title: "Im tired of doing whis update so",
+            description: "x1e30 PP",
+            tooltip: "Я заебался делать обнову, поэтому просто закину ПП бафф, надеюсь обнова вам зашла, очень долго её делал, по сравнению с другими обновами",
+            cost: new Decimal(20),
         },
     },
     milestones: {
@@ -328,6 +393,289 @@ addLayer("k", {
                 return eff
             }, 
             effectDisplay(x) { return format(buyableEffect(this.layer, this.id))+"x" },
+        },
+    },
+})
+addLayer("m", {
+    name: "Mafia",
+    symbol: "m",
+    position: 1,
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+        mafiaBarXP: new Decimal(0),
+        mafiaBarLevel: new Decimal(0),
+    }},
+    layerShown() { return player[this.layer].unlocked || hasUpgrade("k", 41) },
+    color: "#FFFAEE",
+    requires: new Decimal(11),
+    row: "1",
+    resource: "Money",
+    baseResource: "IQ",
+    baseAmount() {return player.k.points},
+    type: "static",
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        "resource-display",
+        "blank",
+        "upgrades",
+        "blank",
+        "milestones",
+        "blank",
+        ["display-text", function() {
+            let data = player[this.layer]
+            return "Mafia level: "+data.mafiaBarLevel}],
+        "blank",
+        ["bar", "11"],
+        "blank",
+        "buyables",
+        "blank",
+    ],
+    roundUpCost: "true",
+    exponent() {
+         exponent = 0.38
+         if (player[this.layer].points.gte(1e4)) exponent = 0.25
+         return exponent
+    },
+    gainMult() {
+        mult = new Decimal(1)
+        return mult
+    },
+    directMult() {
+        mult = new Decimal(1)
+        if (hasUpgrade("m", 14)) mult = mult.times(upgradeEffect("m", 14))
+        return mult
+    },
+    canBuyMax() {return true},
+    upgrades: {
+        11: {
+            unlocked() {return true},
+            title: "Hire worker",
+            description: "You now have mafia worker",
+            tooltip: "Вы наняли первого работника! Поздровляю!",
+            cost: new Decimal(1),
+        },
+        12: {
+            unlocked() {return player[this.layer].mafiaBarLevel.gte(2)},
+            title: "nice level bro",
+            description: "Mafia level boost points",
+            cost: new Decimal(1),
+            effect() {
+                return new Decimal(player[this.layer].mafiaBarLevel).pow_base(1e7)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 12))+'x'},
+        },
+        13: {
+            unlocked() {return player[this.layer].mafiaBarLevel.gte(3)},
+            title: "nice level bro v2",
+            description: "Mafia level boost PP",
+            cost: new Decimal(1),
+            effect() {
+                return new Decimal(player[this.layer].mafiaBarLevel).pow_base(1e14)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 13))+'x'},
+        },
+        14: {
+            unlocked() {return player[this.layer].mafiaBarLevel.gte(5)},
+            title: "Money producing",
+            description: "buff to money gain based on Mafia level",
+            tooltip: "Чем больше уровень мафии, тем больше денег вы получаете всё логично!",
+            cost: new Decimal(1),
+            effect() {
+                return new Decimal(player[this.layer].mafiaBarLevel).pow_base(3)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 14))+'x'},
+        },
+        15: {
+            unlocked() {return hasUpgrade("m", 14)},
+            title: "Money using",
+            description: "buff to PP gain based on money",
+            cost: new Decimal(2),
+            effect() {
+                hardcap = new Decimal(1e100)
+                if (hasUpgrade("k", 54)) hardcap = new Decimal(1e150)
+                return new Decimal(player[this.layer].points).pow_base(1e15).min(hardcap)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 15))+'x'},
+        },
+        21: {
+            unlocked() {
+                if (hasUpgrade(this.layer, 21)) return false
+                else return hasUpgrade("m", 15)
+            },
+            title: "2nd row",
+            description: "Unlocks 2nd row of money upgrades",
+            cost: new Decimal(5),
+        },
+        31: {
+            unlocked() { return hasUpgrade(this.layer, 21) },
+            title: "If you want good mafia you need money",
+            description: "buffs mafia XP based on money",
+            tooltip: "Чем больше денег, тем больше возможностей у мафии, всё снова логично!",
+            cost: new Decimal(6),
+            effect() {
+                return new Decimal(player.m.points).pow(3).min(1e12)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 31))+"x" }
+        },
+        32: {
+            unlocked() { return hasUpgrade("m", 21)},
+            title: "Hire manager",
+            tooltip: "Поздравляю вас с вашим новым менеджером, ваша мафия начинает достигать новых высот!",
+            description: "Every mafia needs control",
+            cost: new Decimal(3670),
+        },
+        33: {
+            unlocked() { return hasUpgrade("m", 21)},
+            title: "Buy nuts",
+            description: "more nuts gives you x20 mafia XP",
+            tooltip: "Ваши рабочие начали делать резьбу на гайках, и вы стали получать больше уровня мафии.",
+            cost: new Decimal(191740),
+        },
+        34: {
+            unlocked() { return hasUpgrade("m", 21)},
+            title: "Finally points buff",
+            description: "buff points gain based on money",
+            cost: new Decimal(575218),
+            effect(){
+                return new Decimal(player.m.points).plus(1).pow(4).min(1e200)
+            },
+            effectDisplay() {
+                return format(upgradeEffect(this.layer, 34)) + "x"
+            },
+        },
+        35: {
+            unlocked() { return hasUpgrade("m", 21)},
+            title: "Hire BOSS(Sashka)",
+            description: "Every mafia needs control v2",
+            tooltip: "Ну, конечно мы все знаем, что за мафией стоит Сашка, и та йно всем управляет, с ним вы можете ещё сильнее улучшить работника и менеджера",
+            cost: new Decimal(1e11),
+        },
+        41: {
+            unlocked() { return new Decimal(player.m.mafiaBarLevel).gte(43)},
+            title: "Dima",
+            description: "Unlocks Dimitron(not currently in game)",
+            tooltip: "Димитрон?",
+            cost: new Decimal(1e20),
+        },
+    },
+    buyables: {
+        11: {
+            title: "Worker level",
+            unlocked() {return hasUpgrade("m", 11)},
+            cost(x) { return new Decimal(1e197).times(new Decimal(1e15).pow(x)) },
+            display() { return "x200 to mafia XP gain" },
+            canAfford() { return player.points.gte(this.cost()) },
+            purchaseLimit() {
+                return new Decimal(15).plus(buyableEffect("m", 13))
+            },
+            buy() {
+                player.points = player.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { 
+                let data = tmp[this.layer].buyables[this.id]
+                let data2 = tmp[this.layer].buyables[13]
+                return "Cost: " + format(data.cost) + " points\n\
+                Worker level: " + player[this.layer].buyables[this.id] + "/"+new Decimal(15).plus(data2.effect) +"\n\
+                Gain " + format(data.effect) + "x more mafia XP" 
+            },
+            effect(x) { 
+                eff = new Decimal(200).pow(x)
+                return eff
+            }, 
+            displayEffect() { return format(buyableEffect(this.layer, this.id))+"x" },
+        },
+        12: {
+            title: "Manager level",
+            unlocked() {return hasUpgrade("m", 32)},
+            cost(x) { return new Decimal("1e546").times(new Decimal(1e30).pow(x)) },
+            display() { return "x20 to mafia XP gain" },
+            canAfford() { return player.p.points.gte(this.cost()) },
+            purchaseLimit() {
+                return new Decimal(15).plus(buyableEffect("m", 13))
+            },
+            buy() {
+                player.p.points = player.p.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { 
+                let data = tmp[this.layer].buyables[this.id]
+                let data2 = tmp[this.layer].buyables[13]
+                return "Cost: " + format(data.cost) + " prestige points\n\
+                Manager level: " + player[this.layer].buyables[this.id] + "/"+new Decimal(15).plus(data2.effect) +"\n\
+                Gain " + format(data.effect) + "x more mafia XP" 
+            },
+            effect(x) { 
+                eff = new Decimal(20).pow(x)
+                return eff
+            }, 
+            displayEffect() { return format(buyableEffect(this.layer, this.id))+"x" },
+        },
+        13: {
+            title: "BOSS level",
+            unlocked() {return hasUpgrade("m", 35)},
+            cost(x) { 
+                add = new Decimal(2).times(x) 
+                if (new Decimal(getBuyableAmount("m", 13)).eq(2)) add = add.sub(1)
+                cost = new Decimal(18).plus(add)
+                return cost
+            },
+            display() { return "+5 max mafia buyables except boss buyable" },
+            canAfford() { return player.k.points.gte(this.cost()) },
+            purchaseLimit: "3",
+            buy() {
+                player.k.points = player.k.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { 
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " IQ\n\
+                BOSS level: " + player[this.layer].buyables[this.id] + "/3\n\
+                Gain " + format(data.effect) + "more buyables" 
+            },
+            effect(x) { 
+                eff = new Decimal(5).times(x)
+                return eff
+            }, 
+            displayEffect() { return format(buyableEffect(this.layer, this.id))+"x" },
+        },
+    },
+    update() {
+        let mafiaBar = tmp[this.layer].bars[11]
+        if (mafiaBar.unlocked) {
+            let data = player[this.layer]
+            if (mafiaBar.progress.gte(1)) {
+            data.mafiaBarXP = new Decimal(0)
+            data.mafiaBarLevel = data.mafiaBarLevel.plus(1)
+            }   
+            else {
+            data.mafiaBarXPgain = new Decimal(0.01)
+            data.mafiaBarXPgain = data.mafiaBarXPgain.times(buyableEffect(this.layer, 11))
+            data.mafiaBarXPgain = data.mafiaBarXPgain.times(buyableEffect(this.layer, 12))
+            if (hasUpgrade("k", 51)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(upgradeEffect("k", 51))
+            if (hasUpgrade("k", 52)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(5)
+            if (hasUpgrade("m", 33)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(20)
+            if (hasUpgrade(this.layer, 31)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(upgradeEffect(this.layer, 31))
+            if (new Decimal(data.mafiaBarLevel).eq(2)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(3)
+            if (new Decimal(data.mafiaBarLevel).eq(4)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(6)
+            if (new Decimal(data.mafiaBarLevel).eq(8)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(4)
+            if (new Decimal(data.mafiaBarLevel).eq(43)) data.mafiaBarXPgain = data.mafiaBarXPgain.div(1e100)
+            data.mafiaBarXP = data.mafiaBarXP.plus(data.mafiaBarXPgain)
+            }
+        }
+    },
+    bars: {
+        11: {
+            unlocked() { return hasUpgrade("m", 11) },
+        direction: RIGHT,
+        width: 600,
+        height: 50,
+        progress() {
+            let data = player[this.layer];
+            return new Decimal(data.mafiaBarXP).div(new Decimal(data.mafiaBarLevel).pow_base(1000))
+        },
         },
     },
 })
