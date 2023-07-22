@@ -3,7 +3,7 @@ let modInfo = {
 	id: "8318",
 	author: "Danus",
 	pointsName: "points",
-	modFiles: ["layers.js", "tree.js"],
+	modFiles: ["layers/prestige.js", "layers/kirill.js", "layers/money.js", "layers/waiting.js","tree.js", "layers/dimitron.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,16 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.2",
-	name: "Money making"
+	num: "0.4",
+	name: "Dimitron"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.3.2</h3><br>
-		- Added money making.<br>
-		- Added new mechanic.<br>
-		- Added new upgrades.<br>
-		- And blah blah blah blah.<br>`
+	<h3>v0.4</h3><br>
+		- Added Dimitron.<br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -46,15 +43,18 @@ function getPointGen() {
 	let gain = new Decimal(1)
 	if (hasUpgrade("p", 11)) gain = gain.times(2)
 	if (hasUpgrade('k', 11)) gain = gain.times(2)
+	if (hasUpgrade('d', 11)) gain = gain.times(5)
 	gain = gain.times(buyableEffect("k", 11))
 	if (hasUpgrade('k', 12)) gain = gain.times(2)
 	if (hasUpgrade("p", 12)) gain = gain.times(upgradeEffect("p", 12))
 	if (hasUpgrade("p", 31)) gain = gain.times(upgradeEffect("p", 31))
 	if (hasUpgrade("k", 14)) gain = gain.times(upgradeEffect("k", 14))
 	if (hasUpgrade("p", 14)) gain = gain.times(5)
+	if (hasUpgrade("d", 14)) gain = gain.times(1e100)
 	if (hasUpgrade("m", 12)) gain = gain.times(upgradeEffect("m", 12))
 	if (hasUpgrade("m", 34)) gain = gain.times(upgradeEffect("m", 34))
 	if (hasUpgrade("p", 33)) gain = gain.pow(1.1)
+	if (hasUpgrade("d", 12)) gain = gain.pow(1.01)
 	return gain
 }
 
@@ -68,7 +68,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e999"))
+	return player.points.gte(new Decimal("1e99999"))
 }
 
 
