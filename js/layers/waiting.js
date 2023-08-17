@@ -138,8 +138,8 @@ addLayer("w", {
         },
         13: {
             unlocked() { return new Decimal(getBuyableAmount("w", 11)).gte(3)},
-            title: "waiting bonus",
-            description: "Minutes boost seconds",
+            title: "waiting bonus v2",
+            description: "Prestige points boost minutes",
             cost: new Decimal(100),
             effect() {
                 return new Decimal(player.p.points).plus(1).pow(0.00008)
