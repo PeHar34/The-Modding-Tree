@@ -179,7 +179,6 @@ addLayer("w", {
             unlocked() { return new Decimal(getBuyableAmount("w", 11)).gte(10) },
             title: "Smartness",
             description: "More points but prestige formula is worse",
-            tooltip: "У вас средний уровень айкью, вы способны улучшить поинты и сделать формула хуже, там, чтобы это дало бафф",
             cost: new Decimal(2e20),
         },
         24: {
