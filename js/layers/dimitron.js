@@ -12,6 +12,12 @@ addLayer("d", {
     requires: new Decimal(2e20),
     row: "2",
     resource: "Seconds",
+    doReset(resettingLayer) {
+        if(layers[resettingLayer].row >= this.row) return;
+            let keep = []
+
+            layerDataReset(this.layer, keep)
+    },
     baseResource: "Money",
     baseAmount() {return player.m.points},
     type: "normal",
@@ -30,11 +36,12 @@ addLayer("d", {
     ],
     roundUpCost: "true",
     exponent() {
-         exponent = 0.1
-         return exponent
+         if (hasUpgrade("w", 15)) return 0.15
+         else return 0.1
     },
     gainMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("w", 12)) mult = mult.times(upgradeEffect("w", 12))
         return mult
     },
     directMult() {
@@ -103,7 +110,7 @@ addLayer("d", {
             unlocked() { return hasUpgrade("d", 21)},
             title: "Smart",
             description: "prestige formula better",
-            tooltip: "Вы умны, а поэтмоу делаете престиж формулу легче",
+            tooltip: "Вы умны, а поэтоиу делаете престиж формулу легче",
             cost: new Decimal(40),
         },   
         34: {
@@ -120,9 +127,12 @@ addLayer("d", {
             cost: new Decimal(140),
         },  
         41: {
-            unlocked() { return hasUpgrade("d", 35)},
+            unlocked() { 
+                if (player.w.unlocked) return false
+                else return  hasUpgrade("d", 35)
+            },
             title: "waiting...",
-            description: "Unlkocks waiting(not currently in game)",
+            description: "Unlocks waiting(not currently in game)",
             cost: new Decimal(10000),
         },  
     },
@@ -130,7 +140,7 @@ addLayer("d", {
         0: {
             unlocked() {return hasUpgrade("d", 12)},
             requirementDescription: "3 total seconds",
-            effectDescription: "save PP upgrades on Dimitron",
+            effectDescription: "keep PP upgrades on Dimitron",
             done() { return player.d.total.gte(3) },
         },
         1: {
@@ -148,19 +158,19 @@ addLayer("d", {
         3: {
             unlocked() {return player.d.total.gte(29)},
             requirementDescription: "30 total seconds",
-            effectDescription: "save buyable level on reset",
+            effectDescription: "keep buyable level on reset",
             done() { return player.d.total.gte(29) },
         },
         4: {
             unlocked() {return player.d.total.gte(30)},
             requirementDescription: "70 total seconds",
-            effectDescription: "save kirill upgrades on reset",
+            effectDescription: "keep kirill upgrades on reset",
             done() { return player.d.total.gte(70) },
         },
         5: {
             unlocked() {return player.d.total.gte(10000)},
             requirementDescription: "10000 total seconds",
-            effectDescription: "save money upgrades and mafia level on reset",
+            effectDescription: "keep money upgrades and mafia level on reset",
             done() { return player.d.total.gte(10000) },
         },
     },

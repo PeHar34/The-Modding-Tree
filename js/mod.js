@@ -3,7 +3,7 @@ let modInfo = {
 	id: "8318",
 	author: "Danus",
 	pointsName: "points",
-	modFiles: ["layers/prestige.js", "layers/kirill.js", "layers/money.js", "layers/waiting.js","tree.js", "layers/dimitron.js"],
+	modFiles: ["layers/prestige.js", "layers/kirill.js", "layers/money.js", "layers/waiting.js","tree.js", "layers/dimitron.js", "layers/oscar.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,13 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4",
-	name: "Dimitron"
+	num: "0.5",
+	name: "Waiting"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.4</h3><br>
-		- Added Dimitron.<br>`
+	<h3>v0.5</h3><br>
+		- Added Waiting.<br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -55,6 +55,7 @@ function getPointGen() {
 	if (hasUpgrade("m", 34)) gain = gain.times(upgradeEffect("m", 34))
 	if (hasUpgrade("p", 33)) gain = gain.pow(1.1)
 	if (hasUpgrade("d", 12)) gain = gain.pow(1.01)
+	if (hasUpgrade("w", 23)) gain = gain.pow(15)
 	return gain
 }
 
@@ -68,7 +69,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e99999"))
+	return player.points.gte(new Decimal("1e9999999999999"))
 }
 
 

@@ -52,9 +52,8 @@ addLayer("m", {
     ],
     roundUpCost: "true",
     exponent() {
-         exponent = 0.38
-         if (player[this.layer].points.gte(1e4)) exponent = 0.25
-         return exponent
+         if (player[this.layer].points.gte(1e4)) return 0.25
+         else return 0.38
     },
     gainMult() {
         mult = new Decimal(1)
@@ -255,7 +254,7 @@ addLayer("m", {
                 blplus = new Decimal(0)
                 if (hasUpgrade("d", 15)) blplus = new Decimal(2)
                 if (hasUpgrade("d", 35)) blplus = new Decimal(12)
-                return new Decimal(3).plus(blplus)
+                return new Decimal(3).plus(blplus).plus(upgradeEffect("w", 22))
             },
             buy() {
                 player.k.points = player.k.points.sub(this.cost())
@@ -267,8 +266,8 @@ addLayer("m", {
                 if (hasUpgrade("d", 15)) blplus = new Decimal(2)
                 if (hasUpgrade("d", 35)) blplus = new Decimal(12)
                 return "Cost: " + format(data.cost) + " IQ\n\
-                BOSS level: " + player[this.layer].buyables[this.id] + "/"+new Decimal(3).plus(blplus) +"\n\
-                Gain " + format(data.effect) + "more buyables" 
+                BOSS level: " + player[this.layer].buyables[this.id] + "/"+new Decimal(3).plus(blplus).plus(upgradeEffect("w", 22)) +"\n\
+                Gain " + format(data.effect) + " more buyables" 
             },
             effect(x) { 
                 eff = new Decimal(5).times(x)
@@ -276,6 +275,20 @@ addLayer("m", {
             }, 
             displayEffect() { return format(buyableEffect(this.layer, this.id))+"x" },
         },
+    },
+    automate() {
+        if (hasUpgrade("w", 22) && canBuyBuyable(this.layer, 11)) {
+            addBuyables(this.layer, 11, 1);
+            updateBuyableTemp(this.layer);
+        }
+        if (hasUpgrade("w", 22) && canBuyBuyable(this.layer, 12)) {
+            addBuyables(this.layer, 12, 1);
+            updateBuyableTemp(this.layer);
+        }
+        if (hasUpgrade("w", 22) && canBuyBuyable(this.layer, 13)) {
+            addBuyables(this.layer, 13, 1);
+            updateBuyableTemp(this.layer);
+        }
     },
     update() {
         let mafiaBar = tmp[this.layer].bars[11]
@@ -309,8 +322,10 @@ addLayer("m", {
         width: 600,
         height: 50,
         progress() {
-            let data = player[this.layer];
-            return new Decimal(data.mafiaBarXP).div(new Decimal(data.mafiaBarLevel).pow_base(1000))
+            let data = player[this.layer]
+            let hardness = new Decimal(1000)
+            if (hasUpgrade("w", 24)) hardness = new Decimal(700)
+            return new Decimal(data.mafiaBarXP).div(new Decimal(data.mafiaBarLevel).pow_base(hardness))
         },
         },
     },

@@ -26,6 +26,7 @@ addLayer("p", {
         exponent = 0.5
         if (hasUpgrade("k", 32)) exponent = 0.7
         if(hasUpgrade("d", 33)) exponent = 2
+        if(hasUpgrade("w", 23)) exponent = 0.3
         return exponent
     },
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -38,8 +39,9 @@ addLayer("p", {
         if (hasUpgrade('d', 11)) mult = mult.times(5)
         if (hasUpgrade('d', 31)) mult = mult.times(1e100)
         if (hasUpgrade('d', 32)) mult = mult.times(1e25)
-        nult = mult.times(buyableEffect("k", 11))
+        mult = mult.times(buyableEffect("w", 11))
         if (hasUpgrade("k", 14)) mult = mult.times(upgradeEffect("k", 14))
+        if (hasUpgrade("w", 14)) mult = mult.times(buyableEffect("w", 11))
         if (hasUpgrade("k", 55)) mult = mult.times(1e30)
         if (hasUpgrade("m", 15)) mult = mult.times(upgradeEffect("m", 15))
         if (hasUpgrade("m", 13)) mult = mult.times(upgradeEffect("m", 13))

@@ -17,7 +17,6 @@ addLayer("k", {
     doReset(resettingLayer) {
         if(layers[resettingLayer].row <= this.row) return;
             let keep = []
-            let keepBuyables = []
 
             if(hasMilestone("d", 3)) keep.push("buyables")
             if(hasMilestone("d", 4)) keep.push("upgrades")
@@ -37,7 +36,18 @@ addLayer("k", {
         mult = new Decimal(1)
         return mult
     },
+    directMult() {
+        mult = new Decimal(1)
+        mult = mult.times(buyableEffect("w", 12))
+        return mult
+    },
     canBuyMax() {return hasUpgrade("k", 13)},
+    automate() {
+        if (hasUpgrade("w", 14) && canBuyBuyable(this.layer, 11)) {
+            addBuyables(this.layer, 11, 1);
+            updateBuyableTemp(this.layer);
+        }
+    },
     buyables: {
         11: {
             title: "Roblox",
@@ -61,9 +71,12 @@ addLayer("k", {
                 let data = tmp[this.layer].buyables[this.id]
                 madd = new Decimal(0)
                 if (hasUpgrade("d", 34)) madd = new Decimal(100)
-                return "Cost: " + format(data.cost) + " IQ\n\
+                if (hasUpgrade("w", 14)) return "Cost: " + format(data.cost) + " IQ\n\
                 Amount: " + player[this.layer].buyables[this.id] + "/"+new Decimal(10).plus(madd)+"\n\
-                Gain " + format(data.effect) + "x more points and multiplies PP by " + format(data.effect) +"x"
+                Gain " + format(data.effect) + "x more points and " + format(data.effect) + "x to PP gain"
+                else return "Cost: " + format(data.cost) + " IQ\n\
+                Amount: " + player[this.layer].buyables[this.id] + "/"+ new Decimal(10).plus(madd)+"\n\
+                Gain " + format(data.effect) + "x more points"
             },
             effect(x) { 
                 eff = new Decimal("1e5")
