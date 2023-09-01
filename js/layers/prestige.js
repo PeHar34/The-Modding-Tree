@@ -33,11 +33,13 @@ addLayer("p", {
         mult = new Decimal(1)
         if (hasUpgrade('p', 13)) mult = mult.times(upgradeEffect('p', 13))
         if (hasUpgrade('p', 32)) mult = mult.times(10)
+        if (hasUpgrade('o', 11)) mult = mult.times(10)
         if (hasUpgrade('k', 11)) mult = mult.times(2)
         if (hasUpgrade("k", 35)) mult = mult.times(upgradeEffect("k", 35))
         if (hasUpgrade('k', 12)) mult = mult.times(2)
         if (hasUpgrade('d', 11)) mult = mult.times(5)
         if (hasUpgrade('d', 31)) mult = mult.times(1e100)
+        if (hasUpgrade('o', 25)) mult = mult.times("1e5000000")
         if (hasUpgrade('d', 32)) mult = mult.times(1e25)
         mult = mult.times(buyableEffect("w", 11))
         if (hasUpgrade("k", 14)) mult = mult.times(upgradeEffect("k", 14))
@@ -79,6 +81,7 @@ addLayer("p", {
                 hardcap = new Decimal("1e6")
                 if (hasUpgrade("k", 31)) hardcap = new Decimal("1e100")
                 if (hasUpgrade("k", 53)) hardcap = new Decimal("1e300")
+                if (hasUpgrade("o", 12)) hardcap = new Decimal("1e1e5")
                 if (hasUpgrade("d", 32)) hardcap = hardcap.times(1e20)
                 return player[this.layer].points.add(1).pow(0.5).min(hardcap)
             },
@@ -93,6 +96,7 @@ addLayer("p", {
                 hardcap = new Decimal("100")
                 if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
                 if (hasUpgrade("k", 54)) hardcap = new Decimal("1e200")
+                if (hasUpgrade("o", 12)) hardcap = new Decimal("1e1e5")
                 if (hasUpgrade("d", 32)) hardcap = hardcap.times(1e20)
                 return player.points.add(1).pow(0.15).min(hardcap)
             },
@@ -128,6 +132,7 @@ addLayer("p", {
                 hardcap = new Decimal("100")
                 if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
                 if (hasUpgrade("k", 54)) hardcap = new Decimal("1e200")
+                if (hasUpgrade("o", 12)) hardcap = new Decimal("1e1e5")
                 if (hasUpgrade("d", 32)) hardcap = hardcap.times(1e20)
                 return player.points.add(1).pow(0.1).min(hardcap)
             },
@@ -159,6 +164,7 @@ addLayer("p", {
             effect() {
                 hardcap = new Decimal("100")
                 if (hasUpgrade("k", 31)) hardcap = new Decimal("1e15")
+                if (hasUpgrade("o", 12)) hardcap = new Decimal("1e1e5")
                 if (hasUpgrade("d", 32)) hardcap = hardcap.times(1e20)
                 return player.points.add(1).pow(0.1).min(hardcap)
             },

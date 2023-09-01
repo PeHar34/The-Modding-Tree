@@ -63,6 +63,7 @@ addLayer("m", {
         mult = new Decimal(1)
         if (hasUpgrade("m", 14)) mult = mult.times(upgradeEffect("m", 14))
         if (hasUpgrade("d", 31)) mult = mult.times(300)
+        if (hasUpgrade("o", 11)) milt = mult.times(10)
         return mult
     },
     canBuyMax() {return true},
@@ -277,16 +278,28 @@ addLayer("m", {
         },
     },
     automate() {
-        if (hasUpgrade("w", 22) && canBuyBuyable(this.layer, 11)) {
-            addBuyables(this.layer, 11, 1);
+        if ((hasUpgrade("w", 22) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 11)) {
+            let canBuy = new Decimal(1)
+            let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
+            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.points).div(1e197).log(1e15)))
+            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit);
+            else setBuyableAmount(this.layer, 11, canBuy);
             updateBuyableTemp(this.layer);
         }
-        if (hasUpgrade("w", 22) && canBuyBuyable(this.layer, 12)) {
-            addBuyables(this.layer, 12, 1);
+        if ((hasUpgrade("w", 22) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 12)) {
+            let canBuy = new Decimal(1)
+            let limit = new Decimal(tmp[this.layer].buyables["12"].purchaseLimit)
+            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.p.points).div("1e526").log(1e30)))
+            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 12, limit);
+            else setBuyableAmount(this.layer, 12, canBuy);
             updateBuyableTemp(this.layer);
         }
-        if (hasUpgrade("w", 22) && canBuyBuyable(this.layer, 13)) {
-            addBuyables(this.layer, 13, 1);
+        if ((hasUpgrade("w", 22) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 13)) {
+            let canBuy = new Decimal(1)
+            let limit = new Decimal(tmp[this.layer].buyables["13"].purchaseLimit)
+            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.k.points).sub(18).div(2)))
+            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 13, limit);
+            else setBuyableAmount(this.layer, 13, canBuy);
             updateBuyableTemp(this.layer);
         }
     },
@@ -295,8 +308,13 @@ addLayer("m", {
         if (mafiaBar.unlocked) {
             let data = player[this.layer]
             if (mafiaBar.progress.gte(1)) {
+            let hardness = new Decimal(1000)
+            if (hasUpgrade("w", 24)) hardness = new Decimal(700)
+            if (hasUpgrade("o", 13)) hardness = new Decimal(400)
+            if (hasUpgrade("o", 23)) hardness = new Decimal(100)
+            let lplus = Math.floor(data.mafiaBarXP.log(hardness))
             data.mafiaBarXP = new Decimal(0)
-            data.mafiaBarLevel = data.mafiaBarLevel.plus(1)
+            data.mafiaBarLevel = data.mafiaBarLevel.plus(lplus)
             }   
             else {
             data.mafiaBarXPgain = new Decimal(0.01)
@@ -304,6 +322,7 @@ addLayer("m", {
             data.mafiaBarXPgain = data.mafiaBarXPgain.times(buyableEffect(this.layer, 12))
             if (hasUpgrade("k", 51)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(upgradeEffect("k", 51))
             if (hasUpgrade("k", 52)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(5)
+            if (hasUpgrade("o", 11)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(10)
             if (hasUpgrade("m", 33)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(20)
             if (hasUpgrade("d", 13)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(upgradeEffect("d", 13))
             if (hasUpgrade(this.layer, 31)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(upgradeEffect(this.layer, 31))
@@ -325,6 +344,7 @@ addLayer("m", {
             let data = player[this.layer]
             let hardness = new Decimal(1000)
             if (hasUpgrade("w", 24)) hardness = new Decimal(700)
+            if (hasUpgrade("o", 13)) hardness = new Decimal(400)
             return new Decimal(data.mafiaBarXP).div(new Decimal(data.mafiaBarLevel).pow_base(hardness))
         },
         },

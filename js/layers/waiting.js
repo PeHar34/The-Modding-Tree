@@ -9,6 +9,7 @@ addLayer("w", {
     layerShown() { return player[this.layer].unlocked || hasUpgrade("d", 41) },
     color: "#4682B4",
     requires() {
+        if (getBuyableAmount("w", 13).gte(10)) return 1
         if (getBuyableAmount("w", 12).gte(10)) return 60
         if (getBuyableAmount("w", 11).gte(10)) return 3600
         else return 86400
@@ -37,6 +38,12 @@ addLayer("w", {
             ["bar", "bar2"],
         ]],
         "blank",
+        ["row", [
+            ["buyable", "13"],
+            "blank",
+            ["bar", "bar3"],
+        ]],
+        "blank",
     ],
     onPrestige() {
         player.d.points = new Decimal(0)
@@ -55,6 +62,10 @@ addLayer("w", {
         exponent = 1
         return exponent
     },
+    passiveGeneration() {
+        if (hasUpgrade("o", 25)) return 0.5
+        else return 0
+    },
     gainMult() {
         mult = new Decimal(1)
         if (hasUpgrade("w", 25)) mult = mult.times(100)
@@ -63,9 +74,36 @@ addLayer("w", {
     directMult() {
         mult = new Decimal(1)
         if (hasUpgrade("w", 13)) mult = mult.times(upgradeEffect("w", 13))
+        if (hasUpgrade("o", 11)) mult = mult.times(10)
         return mult
     },
     canBuyMax() {return false },
+    automate() {
+        if (hasUpgrade("o", 24) && canBuyBuyable(this.layer, 11)) {
+            let canBuy = new Decimal(1)
+            let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
+            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.w.points).log(10)))
+            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit);
+            else setBuyableAmount(this.layer, 11, canBuy);
+            updateBuyableTemp(this.layer);
+        }
+        if (hasUpgrade("o", 24) && canBuyBuyable(this.layer, 12)) {
+            let canBuy = new Decimal(1)
+            let limit = new Decimal(tmp[this.layer].buyables["12"].purchaseLimit)
+            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.w.points).div(1e14).log(100)))
+            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 12, limit);
+            else setBuyableAmount(this.layer, 12, canBuy);
+            updateBuyableTemp(this.layer);
+        }
+        if (hasUpgrade("o", 24) && canBuyBuyable(this.layer, 13)) {
+            let canBuy = new Decimal(1)
+            let limit = new Decimal(tmp[this.layer].buyables["13"].purchaseLimit)
+            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.w.points).div("1e320").log(1e20)))
+            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 13, limit);
+            else setBuyableAmount(this.layer, 13, canBuy);
+            updateBuyableTemp(this.layer);
+        }
+    },
     buyables: {
         11: {
             title: "Wait prestige",
@@ -113,6 +151,31 @@ addLayer("w", {
             },
             effect(x) { 
                 eff = new Decimal("1.1").pow(x)
+                return eff
+            }, 
+            displayEffect() { return format(buyableEffect(this.layer, this.id))+"x" },
+        },
+        13: {
+            title: "Wait Oscar",
+            unlocked() {return hasUpgrade("o", 21)},
+            cost(x) { return new Decimal("1e320").times(new Decimal(1e20).pow(x)) },
+            display() { return "x10 to oscars" },
+            canAfford() { return player.w.points.gte(this.cost()) },
+            purchaseLimit() {
+                return new Decimal(10)
+            },
+            buy() {
+                player.w.points = player.w.points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { 
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " minutes\n\
+                wait progress: " + player[this.layer].buyables[this.id] + "/10\n\
+                Gain " + format(data.effect) + "x more oscars" 
+            },
+            effect(x) { 
+                eff = new Decimal("10").pow(x)
                 return eff
             }, 
             displayEffect() { return format(buyableEffect(this.layer, this.id))+"x" },
@@ -214,6 +277,15 @@ addLayer("w", {
             height: 190,
             progress() {
                 return new Decimal(getBuyableAmount("w", 12).div(10))
+            },
+        },
+        bar3: {
+            unlocked() { return hasUpgrade("o", 21) },
+            direction: RIGHT,
+            width: 500,
+            height: 190,
+            progress() {
+                return new Decimal(getBuyableAmount("w", 13).div(10))
             },
         },
     },

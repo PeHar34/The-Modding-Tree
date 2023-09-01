@@ -13,7 +13,7 @@ addLayer("d", {
     row: "2",
     resource: "Seconds",
     doReset(resettingLayer) {
-        if(layers[resettingLayer].row >= this.row) return;
+        if(layers[resettingLayer].row <= this.row) return;
             let keep = []
 
             layerDataReset(this.layer, keep)
@@ -46,7 +46,12 @@ addLayer("d", {
     },
     directMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("o", 11)) mult = mult.times(10)
         return mult
+    },
+    passiveGeneration() {
+        if (hasUpgrade("o", 25)) return 0.5
+        else return 0
     },
     canBuyMax() {return true},
     upgrades: {

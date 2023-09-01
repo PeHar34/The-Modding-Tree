@@ -39,12 +39,18 @@ addLayer("k", {
     directMult() {
         mult = new Decimal(1)
         mult = mult.times(buyableEffect("w", 12))
+        if (hasUpgrade("o", 11)) mult = mult.times(3)
+        if (hasUpgrade("o", 15)) mult = mult.times(5)
         return mult
     },
-    canBuyMax() {return hasUpgrade("k", 13)},
+    canBuyMax() { return hasUpgrade("k", 13) || player.d.unlocked },
     automate() {
-        if (hasUpgrade("w", 14) && canBuyBuyable(this.layer, 11)) {
-            addBuyables(this.layer, 11, 1);
+        if ((hasUpgrade("w", 14) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 11)) {
+            let canBuy = new Decimal(1)
+            let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
+            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.k.points).pow(0.5).sub(3)));
+            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit);
+            else setBuyableAmount(this.layer, 11, canBuy);
             updateBuyableTemp(this.layer);
         }
     },
@@ -55,12 +61,18 @@ addLayer("k", {
                 if (player.d.unlocked) return true
                 else return hasUpgrade("k", 21)
             },
-            cost(x) { return new Decimal(3).add(x) },
+            cost(x) { 
+                let pow = new Decimal(1)
+                if (hasUpgrade("o", 22)) pow = new Decimal(2)
+                return new Decimal(3).add(x).pow(pow) 
+            },
             display() { return "Waste your IQ on roblox(roblox makes you more powerful)" },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             purchaseLimit() {
                 madd = new Decimal(0)
+                let data2 = tmp["m"].buyables["13"]
                 if (hasUpgrade("d", 34)) madd = new Decimal(100)
+                if (hasUpgrade("o", 22)) madd = madd.plus(data2.effect)
                 return new Decimal(10).plus(madd)
             },
             buy() {
@@ -69,8 +81,10 @@ addLayer("k", {
             },
             display() { 
                 let data = tmp[this.layer].buyables[this.id]
+                let data2 = tmp["m"].buyables["13"]
                 madd = new Decimal(0)
                 if (hasUpgrade("d", 34)) madd = new Decimal(100)
+                if (hasUpgrade("o", 22)) madd = madd.plus(data2.effect)
                 if (hasUpgrade("w", 14)) return "Cost: " + format(data.cost) + " IQ\n\
                 Amount: " + player[this.layer].buyables[this.id] + "/"+new Decimal(10).plus(madd)+"\n\
                 Gain " + format(data.effect) + "x more points and " + format(data.effect) + "x to PP gain"
@@ -81,6 +95,7 @@ addLayer("k", {
             effect(x) { 
                 eff = new Decimal("1e5")
                 if (hasUpgrade("d", 34)) eff = new Decimal("1e100")
+                if (hasUpgrade("o", 22)) eff = new Decimal("1e10000")
                 eff = eff.pow(x)
                 return eff
             }, 
@@ -179,7 +194,7 @@ addLayer("k", {
             title: "Super Buyable",
             description: "Number of buyable purchases boosts PP",
             effect() {
-                return getBuyableAmount(this.layer, 11).plus(1).pow(37)
+                return new Decimal(getBuyableAmount(this.layer, 11)).plus(1).pow(37)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, 35))+"x" },
             cost: new Decimal(10),
