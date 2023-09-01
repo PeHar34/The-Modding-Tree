@@ -75,7 +75,7 @@ addLayer("o", {
             unlocked() {return hasUpgrade("o", 14)},
             title: "IQ test",
             description: "x5 to IQ and autobuys all buyables below dimitron",
-            cost: new Decimal(1e26),
+            cost: new Decimal(1e22),
         },
         21: {
             unlocked() {return hasUpgrade("o", 15)},
