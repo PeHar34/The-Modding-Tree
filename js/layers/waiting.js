@@ -103,7 +103,7 @@ addLayer("w", {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["13"].purchaseLimit)
             if (hasUpgrade("o", 24)) {
-                canBuy = new Decimal(Math.floor(new Decimal(player.w.points).div("1e320").log(1e20)))
+                canBuy = new Decimal(Math.floor(new Decimal(player.w.points).div("1e280").log(1e20)))
                 if (canBuy.gte(limit)) setBuyableAmount(this.layer, 13, limit);
                 else setBuyableAmount(this.layer, 13, canBuy) }
             else addBuyables(this.layer, 13, canBuy)
@@ -164,7 +164,7 @@ addLayer("w", {
         13: {
             title: "Wait Oscar",
             unlocked() {return hasUpgrade("o", 21)},
-            cost(x) { return new Decimal("1e320").times(new Decimal(1e20).pow(x)) },
+            cost(x) { return new Decimal("1e280").times(new Decimal(1e20).pow(x)) },
             display() { return "x10 to oscars" },
             canAfford() { return player.w.points.gte(this.cost()) },
             purchaseLimit() {
