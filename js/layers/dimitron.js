@@ -39,6 +39,9 @@ addLayer("d", {
          if (hasUpgrade("w", 15)) return 0.15
          else return 0.1
     },
+    hotkeys: [
+        {key: "d", description: "D: Reset for seconds", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
     gainMult() {
         mult = new Decimal(1)
         if (hasUpgrade("w", 12)) mult = mult.times(upgradeEffect("w", 12))
