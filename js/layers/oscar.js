@@ -81,7 +81,7 @@ addLayer("o", {
             unlocked() {return hasUpgrade("o", 15)},
             title: "Waiting Oscar",
             description: "Dimitron waits Oscar to play Dota 2",
-            cost: new Decimal(1e26),
+            cost: new Decimal(1e22),
         },
         22: {
             unlocked() {return hasUpgrade("o", 15)},
