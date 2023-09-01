@@ -318,7 +318,7 @@ addLayer("m", {
             if (hasUpgrade("w", 24)) hardness = new Decimal(700)
             if (hasUpgrade("o", 13)) hardness = new Decimal(400)
             if (hasUpgrade("o", 23)) hardness = new Decimal(100)
-            let lplus = Math.floor(data.mafiaBarXP.log(hardness).plus(1))
+            let lplus = Math.floor(new Decimal(mafiaBar.progress).log(hardness).plus(1))
             data.mafiaBarXP = new Decimal(0)
             data.mafiaBarLevel = data.mafiaBarLevel.plus(lplus)
             }   
@@ -351,6 +351,7 @@ addLayer("m", {
             let hardness = new Decimal(1000)
             if (hasUpgrade("w", 24)) hardness = new Decimal(700)
             if (hasUpgrade("o", 13)) hardness = new Decimal(400)
+            if (hasUpgrade("o", 23)) hardness = new Decimal(100)
             return new Decimal(data.mafiaBarXP).div(new Decimal(data.mafiaBarLevel).pow_base(hardness))
         },
         },
