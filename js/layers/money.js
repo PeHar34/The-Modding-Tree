@@ -281,25 +281,31 @@ addLayer("m", {
         if ((hasUpgrade("w", 22) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 11)) {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
-            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.points).div(1e197).log(1e15)))
-            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit);
-            else setBuyableAmount(this.layer, 11, canBuy);
+            if (hasUpgrade("o", 24)) {
+                canBuy = new Decimal(Math.floor(new Decimal(player.points).div(1e197).log(1e15)))
+                if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit);
+                else setBuyableAmount(this.layer, 11, canBuy) }
+            else addBuyables(this.layer, 11, canBuy)
             updateBuyableTemp(this.layer);
         }
         if ((hasUpgrade("w", 22) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 12)) {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["12"].purchaseLimit)
-            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.p.points).div("1e526").log(1e30)))
-            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 12, limit);
-            else setBuyableAmount(this.layer, 12, canBuy);
+            if (hasUpgrade("o", 24)) {
+                canBuy = new Decimal(Math.floor(new Decimal(player.p.points).div("1e526").log(1e30)))
+                if (canBuy.gte(limit)) setBuyableAmount(this.layer, 12, limit);
+                else setBuyableAmount(this.layer, 12, canBuy) }
+            else addBuyables(this.layer, 12, canBuy)
             updateBuyableTemp(this.layer);
         }
         if ((hasUpgrade("w", 22) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 13)) {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["13"].purchaseLimit)
-            if (hasUpgrade("o", 24)) canBuy = new Decimal(Math.floor(new Decimal(player.k.points).sub(18).div(2)))
-            if (canBuy.gte(limit)) setBuyableAmount(this.layer, 13, limit);
-            else setBuyableAmount(this.layer, 13, canBuy);
+            if (hasUpgrade("o", 24)) {
+                canBuy = new Decimal(Math.floor(new Decimal(player.k.points).sub(18).div(2)))
+                if (canBuy.gte(limit)) setBuyableAmount(this.layer, 13, limit);
+                else setBuyableAmount(this.layer, 13, canBuy) }
+            else addBuyables(this.layer, 13, canBuy)
             updateBuyableTemp(this.layer);
         }
     },
