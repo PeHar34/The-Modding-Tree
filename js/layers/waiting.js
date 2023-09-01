@@ -172,7 +172,7 @@ addLayer("w", {
                 let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " minutes\n\
                 wait progress: " + player[this.layer].buyables[this.id] + "/10\n\
-                Gain " + format(data.effect) + "x more oscars" 
+                Gain " + format(data.effect) + "x more motivation points" 
             },
             effect(x) { 
                 eff = new Decimal("10").pow(x)
