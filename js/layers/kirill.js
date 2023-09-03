@@ -41,6 +41,7 @@ addLayer("k", {
         mult = mult.times(buyableEffect("w", 12))
         if (hasUpgrade("o", 11)) mult = mult.times(3)
         if (hasUpgrade("o", 15)) mult = mult.times(5)
+        if (hasUpgrade("z", 22)) mult = mult.times(2.2)
         return mult
     },
     canBuyMax() { return hasUpgrade("k", 13) || player.d.unlocked },

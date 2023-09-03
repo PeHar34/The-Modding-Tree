@@ -115,6 +115,7 @@ addLayer("m", {
                 hardcap = new Decimal(1e100)
                 if (hasUpgrade("k", 54)) hardcap = new Decimal(1e150)
                 if (hasUpgrade("d", 32)) hardcap = hardcap.times(1e20)
+                if (hasUpgrade("z", 14)) hardcap = hardcap.times("1e5000000")
                 return new Decimal(player[this.layer].points).pow_base(1e15).min(hardcap)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, 15))+'x'},

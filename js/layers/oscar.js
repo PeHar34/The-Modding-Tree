@@ -109,7 +109,10 @@ addLayer("o", {
             cost: new Decimal(1e48),
         },
         31: {
-            unlocked() {return hasUpgrade("o", 25)},
+            unlocked() {
+                if (player.z.unlocked) return false
+                else return hasUpgrade("o", 25)
+            },
             title: "Dota 2",
             description: "Unlocks Dota 2(not currently in game)",
             cost: new Decimal(1e88),
