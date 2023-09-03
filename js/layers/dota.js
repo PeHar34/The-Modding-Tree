@@ -439,7 +439,7 @@ addLayer("z", {
             if (hasUpgrade("z", 11)) data.energyGain2 = new Decimal(data.energyGain2).mul(3)
             if (hasUpgrade("z", 25)) data.energyGain1 = new Decimal(data.energyGain1).mul(5)
             data.energy = data.energy.plus(data.energyGain2)
-            data.poopGain = new Decimal(0.03).times(data.progress2.times(10).sub(1)) * diff
+            data.poopGain = new Decimal(0.03).times(data.progress2.times(10)) * diff
             if (hasUpgrade("z", 21)) data.poopGain = new Decimal(data.poopGain).div(3)
             data.progress3 = data.progress3.plus(data.poopGain)
         }
