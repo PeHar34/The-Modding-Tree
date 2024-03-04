@@ -234,7 +234,7 @@ addLayer("y", {
                 if (hasMilestone("y", 5)) return true
                 else return false
              },
-            requirementDescription: "Signature hero",
+            requirementDescription: "Signature hero(100 total yul points)",
             effectDescription: "Auto picking hero with 100% power",
             done() { return player.y.total.gte(100) },
         },
