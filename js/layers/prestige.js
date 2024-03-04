@@ -17,6 +17,7 @@ addLayer("p", {
         if(layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep) 
 
         if(layers[resettingLayer].row > this.row) player[this.layer].upgrades = keep
+        player["p"].progress = new Decimal(0)
     },
     tabFormat: [
         "main-display",
@@ -212,6 +213,9 @@ addLayer("p", {
                 player["z"].unlocked = "True"
                 player["o"].points = new Decimal(1e150)
                 player["z"].MMR = new Decimal(500)
+                player["y"].points = new Decimal(0)
+                player["y"].total = new Decimal(0)
+                
             },
         },
     },
