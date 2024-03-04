@@ -26,7 +26,7 @@ addLayer("w", {
 
     },
     hotkeys: [
-        {key: "w", description: "W: Reset for seconds", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "w", description: "W: Reset for minutes", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     row: "2",
     resource: "Minutes",
