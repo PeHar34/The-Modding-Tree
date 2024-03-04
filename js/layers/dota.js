@@ -586,6 +586,7 @@ addLayer("z", {
             cost: new Decimal(1),
             currencyInternalName() { return "MMR" },
             currencyLocation() { return player[this.layer] },
+            currencyDisplayName() { return "MMR" },
         },
         12: {
             unlocked() {return true},
