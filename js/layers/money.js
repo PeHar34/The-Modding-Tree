@@ -26,10 +26,7 @@ addLayer("m", {
             let keep = []
             let mafiaLevel = new Decimal(player[this.layer].mafiaBarLevel)
 
-            if(hasMilestone("d", 5)) keep.push("upgrades")
-            if (hasMilestone("y", 2)) {
-                keep.push("upgrades")
-            }
+            if(hasMilestone("d", 5) || hasMilestone("y", 2)) keep.push("upgrades")
 
             layerDataReset(this.layer, keep) 
 
