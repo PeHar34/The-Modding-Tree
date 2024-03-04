@@ -3,7 +3,7 @@ let modInfo = {
 	id: "8318",
 	author: "Danus",
 	pointsName: "points",
-	modFiles: ["layers/prestige.js", "layers/kirill.js", "layers/money.js", "layers/waiting.js","tree.js", "layers/dimitron.js", "layers/oscar.js", "layers/dota.js"],
+	modFiles: ["layers/prestige.js", "layers/kirill.js", "layers/money.js", "layers/waiting.js","tree.js", "layers/dimitron.js", "layers/oscar.js", "layers/dota.js", "layers/yuldash.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,13 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.7",
-	name: "Dota 2"
+	num: "0.8",
+	name: "Yuldash"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.7</h3><br>
-		- Added Dota 2.<br>`
+	<h3>v0.8</h3><br>
+		- Added Yuldash.<br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -70,7 +70,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e9999999999999"))
+	return player.points.gte(new Decimal("1eeeeeeeeee9"))
 }
 
 

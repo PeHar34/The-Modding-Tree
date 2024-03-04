@@ -13,7 +13,11 @@ addLayer("k", {
     row: "1",
     resource: "IQ",
     baseResource: "prestige points",
-    autoPrestige() { return hasMilestone("d", 1)},
+    autoPrestige() { 
+        if (hasUpgrade("y", 12) || hasMilestone("d", 1)) return true
+        else return false
+        
+    },
     doReset(resettingLayer) {
         if(layers[resettingLayer].row <= this.row) return;
             let keep = []
@@ -21,6 +25,10 @@ addLayer("k", {
             if(hasMilestone("d", 3)) keep.push("buyables")
             if(hasMilestone("d", 4)) keep.push("upgrades")
             if(hasUpgrade("d", 33)) keep.push("milestones")
+            if (hasMilestone("y", 1)) {
+                keep.push("upgrades")
+                keep.push("milestones")
+            }
 
             layerDataReset(this.layer, keep) 
     },
@@ -42,19 +50,31 @@ addLayer("k", {
         if (hasUpgrade("o", 11)) mult = mult.times(3)
         if (hasUpgrade("o", 15)) mult = mult.times(5)
         if (hasUpgrade("z", 22)) mult = mult.times(2.2)
+        if (hasUpgrade("y", 11)) mult = mult.times(5)
+        if (hasUpgrade("y", 24)) mult = mult.times(upgradeEffect("y", 24))
         return mult
     },
     canBuyMax() { return hasUpgrade("k", 13) || player.d.unlocked },
     automate() {
-        if ((hasUpgrade("w", 14) || hasUpgrade("o", 15)) && canBuyBuyable(this.layer, 11)) {
+        if (hasUpgrade("w", 14) || hasUpgrade("o", 24) || hasUpgrade("y", 12) && canBuyBuyable(this.layer, 11)) {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
-            if (hasUpgrade("o", 24)) {
-                canBuy = new Decimal(Math.floor(new Decimal(player.k.points).pow(0.5).sub(3)))
+            if (hasUpgrade("o", 22)) {
+                canBuy = new Decimal(Math.floor(new Decimal(player.k.points).pow(0.5).sub(2)))
                 if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit)
                 else setBuyableAmount(this.layer, 11, canBuy) }
-            else addBuyables(this.layer, 11, canBuy)
-            updateBuyableTemp(this.layer);
+            else {
+                if (hasUpgrade("y", 12) || hasUpgrade("o", 24))  {
+                let canBuy = new Decimal(1)
+                let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
+                canBuy = new Decimal(Math.floor(new Decimal(player.k.points).sub(2)))
+                if (canBuy.gte(1)) {
+                    if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit);
+                    else setBuyableAmount(this.layer, 11, canBuy) 
+                }}  
+                else addBuyables(this.layer, 11, canBuy)
+            }
+        updateBuyableTemp(this.layer);
         }
     },
     buyables: {

@@ -5,6 +5,7 @@ addLayer("z", {
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
+        req: new Decimal(50),
         total: new Decimal(0),
         setBuyableAmount: new Decimal(0),
         energy: new Decimal(0),
@@ -35,13 +36,13 @@ addLayer("z", {
         power4: new Decimal(0),
         pickChance5: new Decimal(0),
         power5: new Decimal(0),
-        winChance : new Decimal(0),
+        winChance : new Decimal(80),
         line : new Decimal(0),
         late: new Decimal(0),
         win: new Decimal(0),
         MMRGain: new Decimal(1)
     }},
-    canReset() { return hasUpgrade("o", 31) },
+    canReset() { return new Decimal(player.o.points).gte(player[this.layer].getNextAt) },
     layerShown() { return player[this.layer].unlocked || hasUpgrade("o", 31) },
     color: "#D3D3D3",
     getResetGain(useType="custom") { return Math.floor(new Decimal(player.o.points).div(1e87).log(1e30).sub(player.z.total).plus(1) ) },
@@ -75,7 +76,7 @@ addLayer("z", {
         mult = mult.times(buyableEffect("w", 13))
         return mult
     },
-    canBuyMax() { return false },
+    canBuyMax() { return true },
     tabFormat: [
         "main-display",
         "prestige-button",
@@ -152,6 +153,21 @@ addLayer("z", {
         "blank",
         ["display-text", 
             function() { return "Energy: "+format(player[this.layer].energy) }
+        ],
+        "blank",
+        ["display-text", 
+            function() { 
+                let data = player[this.layer]
+                let req = data.req
+                if (hasUpgrade("z", 13)) req = new Decimal(req).times(5)
+                if (hasUpgrade("z", 15)) req = new Decimal(req).times(5)
+                if (hasUpgrade("z", 24)) req = new Decimal(req).times(5)
+                if (hasUpgrade("y", 12)) req = new Decimal(req).times(10)
+                if (hasUpgrade("y", 13)) req = new Decimal(req).times(10)
+                if (hasUpgrade("y", 14) && hasUpgrade("z", 24)) req = new Decimal(req).times(50)
+                
+                return "Needed energy: "+format(req) 
+            }
         ],
         "blank",
         ["clickable", '15'],
@@ -243,20 +259,38 @@ addLayer("z", {
         15: {
             display() {return "Play Dota 2"},
             canClick() { 
-                let req = new Decimal(50)
+                let data = player[this.layer]
+                let req = data.req
                 if (hasUpgrade("z", 13)) req = new Decimal(req).times(5)
                 if (hasUpgrade("z", 15)) req = new Decimal(req).times(5)
                 if (hasUpgrade("z", 24)) req = new Decimal(req).times(5)
+                if (hasUpgrade("y", 12)) req = new Decimal(req).times(10)
+                if (hasUpgrade("y", 13)) req = new Decimal(req).times(10)
+                if (hasUpgrade("y", 14) && hasUpgrade("z", 24)) req = new Decimal(req).times(50)
                 if (new Decimal(player[this.layer].play).eq(0) && new Decimal(player[this.layer].play2).eq(0) && new Decimal(player[this.layer].pick).eq(0)) return player[this.layer].energy.gte(req)
                 else return false
             },
             onClick() { 
-                let req = new Decimal(50)
+                let data = player[this.layer]
+                let req = data.req
                 if (hasUpgrade("z", 13)) req = new Decimal(req).times(5)
                 if (hasUpgrade("z", 15)) req = new Decimal(req).times(5)
                 if (hasUpgrade("z", 24)) req = new Decimal(req).times(5)
-                player[this.layer].play = new Decimal(1)
-                player[this.layer].energy = new Decimal(player[this.layer].energy).sub(req)
+                if (hasUpgrade("y", 12)) req = new Decimal(req).times(10)
+                if (hasUpgrade("y", 13)) req = new Decimal(req).times(10)
+                if (hasUpgrade("y", 14) && hasUpgrade("z", 24)) req = new Decimal(req).times(50)
+                data.play = new Decimal(1)
+                data.energy = new Decimal(data.energy).sub(req)
+                data.MMRGain = new Decimal(1)
+                if (hasUpgrade("y", 15)) data.MMRGain = new Decimal(3)
+                if (hasUpgrade("z", 13)) data.MMRGain = data.MMRGain.times(5)
+                if (hasUpgrade("z", 15)) data.MMRGain = data.MMRGain.times(5)
+                if (hasUpgrade("z", 24)) data.MMRGain = data.MMRGain.times(4)
+                if (hasUpgrade("y", 12)) data.MMRGain = data.MMRGain.times(4)
+                if (hasUpgrade("y", 13)) data.MMRGain = data.MMRGain.times(4)
+                if (hasUpgrade("y", 14) && hasUpgrade("z", 24)) data.MMRGain = data.MMRGain.times(3)
+                if (hasUpgrade("y", 22)) data.MMRGain = data.MMRGain.times(upgradeEffect("y", 22))
+                if (hasUpgrade("y", 25)) data.MMRGain = data.MMRGain.times(20)
             },
         },
         21: {
@@ -272,7 +306,6 @@ addLayer("z", {
                 lineChance = new Decimal(Math.random()* 100)
                 if (new Decimal(lineChance).lte(50)) player[this.layer].line = new Decimal(1)
                 else player[this.layer].line = new Decimal(0)
-                player[this.layer].winChance = new Decimal(80)
                 if (new Decimal(player[this.layer].pick).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(0.7)
                 if (new Decimal(player[this.layer].line).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(1.2)
                 else player[this.layer].winChance = new Decimal(player[this.layer].winChance).div(1.2)
@@ -305,7 +338,6 @@ addLayer("z", {
                 lineChance = new Decimal(Math.random()* 100)
                 if (new Decimal(lineChance).lte(50)) player[this.layer].line = new Decimal(1)
                 else player[this.layer].line = new Decimal(0)
-                player[this.layer].winChance = new Decimal(80)
                 if (new Decimal(player[this.layer].pick).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(0.7)
                 if (new Decimal(player[this.layer].line).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(1.2)
                 else player[this.layer].winChance = new Decimal(player[this.layer].winChance).div(1.2)
@@ -338,7 +370,6 @@ addLayer("z", {
                 lineChance = new Decimal(Math.random()* 100)
                 if (new Decimal(lineChance).lte(50)) player[this.layer].line = new Decimal(1)
                 else player[this.layer].line = new Decimal(0)
-                player[this.layer].winChance = new Decimal(80)
                 if (new Decimal(player[this.layer].pick).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(0.7)
                 if (new Decimal(player[this.layer].line).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(1.2)
                 else player[this.layer].winChance = new Decimal(player[this.layer].winChance).div(1.2)
@@ -371,7 +402,6 @@ addLayer("z", {
                 lineChance = new Decimal(Math.random()* 100)
                 if (new Decimal(lineChance).lte(50)) player[this.layer].line = new Decimal(1)
                 else player[this.layer].line = new Decimal(0)
-                player[this.layer].winChance = new Decimal(80)
                 if (new Decimal(player[this.layer].pick).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(0.7)
                 if (new Decimal(player[this.layer].line).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(1.2)
                 else player[this.layer].winChance = new Decimal(player[this.layer].winChance).div(1.2)
@@ -404,7 +434,6 @@ addLayer("z", {
                 lineChance = new Decimal(Math.random()* 100)
                 if (new Decimal(lineChance).lte(50)) player[this.layer].line = new Decimal(1)
                 else player[this.layer].line = new Decimal(0)
-                player[this.layer].winChance = new Decimal(80)
                 if (new Decimal(player[this.layer].pick).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(0.7)
                 if (new Decimal(player[this.layer].line).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(1.2)
                 else player[this.layer].winChance = new Decimal(player[this.layer].winChance).div(1.2)
@@ -431,13 +460,17 @@ addLayer("z", {
             data.energyGain1 =  new Decimal(5).pow(data.progress1.times(10).sub(1)) * diff
             if (hasUpgrade("z", 11)) data.energyGain1 = new Decimal(data.energyGain1).mul(3)
             if (hasUpgrade("z", 25)) data.energyGain1 = new Decimal(data.energyGain1).mul(5)
+            if (hasUpgrade("y", 11)) data.energyGain1 = new Decimal(data.energyGain1).mul(2)
+            if (hasUpgrade("y", 21)) data.energyGain1 = new Decimal(data.energyGain1).times(upgradeEffect("y", 21))
             data.energy = data.energy.plus(data.energyGain1)
         }
         if (data.progress2.gte(0.1)) {
             data.poopChance = new Decimal(Math.random())
             data.energyGain2 =  new Decimal(5).pow(data.progress2.times(10).sub(1)).times(3) * diff
             if (hasUpgrade("z", 11)) data.energyGain2 = new Decimal(data.energyGain2).mul(3)
-            if (hasUpgrade("z", 25)) data.energyGain1 = new Decimal(data.energyGain1).mul(5)
+            if (hasUpgrade("z", 25)) data.energyGain2 = new Decimal(data.energyGain2).mul(5)
+            if (hasUpgrade("y", 11)) data.energyGain2 = new Decimal(data.energyGain2).mul(2)
+            if (hasUpgrade("y", 21)) data.energyGain2 = new Decimal(data.energyGain2).times(upgradeEffect("y", 21))
             data.energy = data.energy.plus(data.energyGain2)
             data.poopGain = new Decimal(0.03).times(data.progress2.times(10)) * diff
             if (hasUpgrade("z", 21)) data.poopGain = new Decimal(data.poopGain).div(3)
@@ -456,29 +489,57 @@ addLayer("z", {
             let gameSpeed = new Decimal(1)
             if (hasUpgrade("z", 12)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
             if (hasUpgrade("z", 23)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
+            if (hasUpgrade("y", 11)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
+            if (hasUpgrade("y", 23)) gameSpeed = new Decimal(gameSpeed).mul(2)
             data.playTime = new Decimal(data.playTime).plus(gameSpeed * diff )
             if (new Decimal(data.playTime).gte(0) && new Decimal(data.playTime).lte(3)) data.playText = new String("Подбор игроков...")
             if (new Decimal(data.playTime).gte(3)) {
-                data.playText = new String("Выбор героя...")
-                data.play = new Decimal(0)
-                data.playTime = new Decimal(0)
-                data.pick = new Decimal(1)
-                data.pickChance1 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
-                data.power1 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
-                data.pickChance2 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
-                data.power2 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
-                data.pickChance3 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
-                data.power3 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
-                data.pickChance4 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
-                data.power4 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
-                data.pickChance5 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
-                data.power5 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
+                if (hasMilestone("y", 6)) {
+                    player[this.layer].play = new Decimal(0)
+                    player[this.layer].pick = new Decimal(0)
+                    player[this.layer].play2 = new Decimal(1)
+                    player[this.layer].pickChance = Math.random() * 100
+                    if (new Decimal(player[this.layer].pickChance).lte(player[this.layer].pickChance5)) player[this.layer].cpick = new Decimal(1)
+                    else player[this.layer].cpick = new Decimal(0)
+                    lineChance = new Decimal(Math.random()* 100)
+                    if (new Decimal(lineChance).lte(50)) player[this.layer].line = new Decimal(1)
+                    else player[this.layer].line = new Decimal(0)
+                    if (new Decimal(player[this.layer].pick).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(0.7)
+                    if (new Decimal(player[this.layer].line).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(1.2)
+                    else player[this.layer].winChance = new Decimal(player[this.layer].winChance).div(1.2)
+                    lateChance = new Decimal(Math.random()* 100)
+                    if (new Decimal(lateChance).lte(50)) player[this.layer].late = new Decimal(1)
+                    else player[this.layer].late = new Decimal(0)
+                    if (new Decimal(player[this.layer].late).eq(1)) player[this.layer].winChance = new Decimal(player[this.layer].winChance).mul(1.2)
+                    else player[this.layer].winChance = new Decimal(player[this.layer].winChance).div(1.2)
+                    player[this.layer].winChance = new Decimal(player[this.layer].winChance)
+                    win = new Decimal(Math.random() * 100)
+                    if (new Decimal(win).lte(player[this.layer].winChance)) player[this.layer].win = new Decimal(1)
+                    else player[this.layer].win = new Decimal(0)
+                }
+                else {
+                    data.playText = new String("Выбор героя...")
+                    data.play = new Decimal(0)
+                    data.playTime = new Decimal(0)
+                    data.pick = new Decimal(1)
+                    data.pickChance1 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
+                    data.power1 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
+                    data.pickChance2 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
+                    data.power2 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
+                    data.pickChance3 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
+                    data.power3 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
+                    data.pickChance4 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
+                    data.power4 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
+                    data.pickChance5 = new Decimal(Math.floor((Math.random() * 60 ) + 20))
+                    data.power5 = new Decimal(Math.floor((Math.random() * 60 ) + 40))
+                }
             }
         }
         if (new Decimal(data.play2).eq(1)) {
             let gameSpeed = new Decimal(1)
             if (hasUpgrade("z", 12)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
             if (hasUpgrade("z", 23)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
+            if (hasUpgrade("y", 11)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
             data.playTime2 = new Decimal(data.playTime2).plus(gameSpeed * diff)
             if (new Decimal(data.playTime2).lte(3) && new Decimal(data.cpick).eq(0))  data.playText = new String("Вас не контрПикнули")
             if (new Decimal(data.playTime2).lte(3) && new Decimal(data.cpick).eq(1))  data.playText = new String("Вас контрПикнули")
@@ -490,8 +551,23 @@ addLayer("z", {
             if (new Decimal(data.playTime2).gte(12) && new Decimal(data.playTime2).lte(15) && new Decimal(data.win).eq(0))  data.playText = new String("Вы проиграли, -" + format(data.MMRGain) +"MMR")
             if (new Decimal(data.playTime2).gte(12) && new Decimal(data.playTime2).lte(15) && new Decimal(data.win).eq(1))  data.playText = new String("Вы Выиграли, +" + format(data.MMRGain) + "MMR")
             if (new Decimal(data.playTime2).gte(15)) {
-                if (new Decimal(data.win).eq(1)) data.MMR = new Decimal(data.MMR).plus(data.MMRGain)
-                if (new Decimal(data.win).eq(0)) data.MMR = new Decimal(data.MMR).sub(data.MMRGain)
+                if (new Decimal(data.win).eq(1)) {
+                    data.winChance = new Decimal(80)
+                    data.winChance = data.winChance.div(1.1)
+                    if (hasUpgrade("y", 11)) data.winChance = data.winChance.mul(1.2)
+                    if (hasUpgrade("y", 23)) data.winChance = data.winChance.mul(1.1)
+                    data.MMR = new Decimal(data.MMR).plus(data.MMRGain)
+                }
+                if (new Decimal(data.win).eq(0)) { 
+                    data.winChance = new Decimal(80)
+                    data.winChance = data.winChance.mul(1.2)
+                    if (hasUpgrade("y", 11)) data.winChance = data.winChance.mul(1.2)
+                    if (hasUpgrade("y", 23)) data.winChance = data.winChance.mul(1.1)
+                    if (new Decimal(data.MMR).sub(data.MMRGain).gte(0)) {
+                        data.MMR = new Decimal(data.MMR).sub(data.MMRGain)
+                    }
+                    else data.MMR = new Decimal(0)
+                }
                 data.play2 = new Decimal(0)
                 data.pick = new Decimal(0)
                 data.line = new Decimal(0)
@@ -528,9 +604,6 @@ addLayer("z", {
             currencyInternalName() { return "MMR" },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName() { return "MMR" },
-            onPurchase() {
-                player[this.layer].MMRGain = new Decimal(5)
-            }
         },
         14: {
             unlocked() {return true},
@@ -549,9 +622,6 @@ addLayer("z", {
             currencyInternalName() { return "MMR" },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName() { return "MMR" },
-            onPurchase() {
-                player[this.layer].MMRGain = new Decimal(25)
-            }
         },
         21: {
             unlocked() {return hasUpgrade("z", 15)},
@@ -588,9 +658,6 @@ addLayer("z", {
             currencyInternalName() { return "MMR" },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName() { return "MMR" },
-            onPurchase() {
-                player[this.layer].MMRGain = new Decimal(100)
-            }
         },
         25: {
             unlocked() {return hasUpgrade("z", 15)},

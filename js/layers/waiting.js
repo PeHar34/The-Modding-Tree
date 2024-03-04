@@ -14,6 +14,20 @@ addLayer("w", {
         if (getBuyableAmount("w", 11).gte(10)) return 3600
         else return 86400
     },
+    doReset(resettingLayer) {
+        if(layers[resettingLayer].row <= this.row) return;
+            let keep = []
+
+            if(hasMilestone("y", 3)) keep.push("milestones")
+            if(hasMilestone("y", 3)) keep.push("upgrades")
+            if(hasMilestone("y", 3)) keep.push("buyables")
+
+            layerDataReset(this.layer, keep) 
+
+    },
+    hotkeys: [
+        {key: "w", description: "W: Reset for seconds", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
     row: "2",
     resource: "Minutes",
     baseResource: "Seconds",
@@ -48,12 +62,6 @@ addLayer("w", {
     onPrestige() {
         player.d.points = new Decimal(0)
     },
-    doReset(resettingLayer) {
-        if(layers[resettingLayer].row <= this.row) return;
-            let keep = []
-
-            layerDataReset(this.layer, keep) 
-    },
     baseAmount() {return player.d.points},
     type: "normal",
     resetDescription: "Reset all your seconds for ",
@@ -63,7 +71,7 @@ addLayer("w", {
         return exponent
     },
     passiveGeneration() {
-        if (hasUpgrade("o", 25)) return 0.5
+        if (hasMilestone("o", 1)) return 0.5
         else return 0
     },
     gainMult() {
@@ -75,6 +83,7 @@ addLayer("w", {
         mult = new Decimal(1)
         if (hasUpgrade("w", 13)) mult = mult.times(upgradeEffect("w", 13))
         if (hasUpgrade("o", 11)) mult = mult.times(10)
+        if (hasUpgrade("y", 11)) mult = mult.times(100)
         return mult
     },
     canBuyMax() {return false },

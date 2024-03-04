@@ -18,13 +18,17 @@ addLayer("o", {
         if(layers[resettingLayer].row <= this.row) return;
             let keep = []
 
+            if (hasMilestone("y", 5)) keep.push("upgrades")
+            if (hasMilestone("y", 5)) keep.push("milestones")
+
             layerDataReset(this.layer, keep) 
     },
     resetsNothing() { return false },
     baseAmount() {return player.w.points},
     type: "normal",
     exponent() {
-        exponent = 0.5
+        exponent = new Decimal(0.5)
+        if (hasUpgrade("y", 23)) exponent = exponent.mul(1.1)
         return exponent
     },
     gainMult() {
@@ -34,6 +38,8 @@ addLayer("o", {
     directMult() {
         mult = new Decimal(1)
         mult = mult.times(buyableEffect("w", 13))
+        if (hasUpgrade("y", 11)) mult = mult.times(100)
+        if (hasUpgrade("y", 23)) mult = mult
         return mult
     },
     softcap() {
@@ -104,8 +110,8 @@ addLayer("o", {
         },
         25: {
             unlocked() {return hasUpgrade("o", 15)},
-            title: "Prestige points? Minutes? Seconds?",
-            description: "x1e5000000 to PP and you get 50% of minutes and seconds every second",
+            title: "Prestige points?",
+            description: "x1e5000000 to PP",
             cost: new Decimal(1e48),
         },
         31: {
@@ -116,6 +122,20 @@ addLayer("o", {
             title: "Dota 2",
             description: "Unlocks Dota 2(not currently in game)",
             cost: new Decimal(1e88),
+        },
+    },
+    milestones: {
+        0: {
+            unlocked() {return hasUpgrade("o", 13)},
+            requirementDescription: "1e15 motivation points",
+            effectDescription: "Gives 50% of seconds you will get on reset every second",
+            done() { return player.o.points.gte(1e15) },
+        },
+        1: {
+            unlocked() {return hasUpgrade("o", 22)},
+            requirementDescription: "1e33 motivation points",
+            effectDescription: "Gives 50% of minutes you will get on reset every second",
+            done() { return player.o.points.gte(1e33) },
         },
     },
 })

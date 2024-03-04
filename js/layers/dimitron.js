@@ -12,13 +12,17 @@ addLayer("d", {
     requires: new Decimal(2e20),
     row: "2",
     resource: "Seconds",
+    baseResource: "Money",
     doReset(resettingLayer) {
         if(layers[resettingLayer].row <= this.row) return;
             let keep = []
 
-            layerDataReset(this.layer, keep)
+            if(hasMilestone("y", 3)) keep.push("milestones")
+            if(hasMilestone("y", 3)) keep.push("upgrades")
+
+            layerDataReset(this.layer, keep) 
+
     },
-    baseResource: "Money",
     baseAmount() {return player.m.points},
     type: "normal",
     tabFormat: [
@@ -50,10 +54,11 @@ addLayer("d", {
     directMult() {
         mult = new Decimal(1)
         if (hasUpgrade("o", 11)) mult = mult.times(10)
+        if (hasUpgrade("y", 11)) mult = mult.times(100)
         return mult
     },
     passiveGeneration() {
-        if (hasUpgrade("o", 25)) return 0.5
+        if (hasMilestone("o", 0)) return 0.5
         else return 0
     },
     canBuyMax() {return true},

@@ -5,6 +5,7 @@ addLayer("p", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
+        progress: new Decimal(1)
     }},
     doReset(resettingLayer) {
         let keep = []
@@ -12,10 +13,25 @@ addLayer("p", {
         if(hasMilestone("k", 0))keep.push(11, 12, 13, 14, 15, 21)
         if(hasMilestone("k", 1))keep.push(31, 32, 33, 34, 35, 41)
         if(hasMilestone("d", 0))keep.push(11, 12, 13, 14, 15, 21, 31, 32, 33, 34, 35, 41)
+        if(hasMilestone("y", 0))keep.push(11, 12, 13, 14, 15, 21, 31, 32, 33, 34, 35, 41)
         if(layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep) 
 
         if(layers[resettingLayer].row > this.row) player[this.layer].upgrades = keep
     },
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        "resource-display",
+        "blank",
+        "upgrades",
+        "blank",
+        "milestones",
+        "blank",
+        ["clickable", "11"],
+        "blank",
+        "buyables",
+        "blank",
+    ],
     color: "#4BDC13",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
     resource: "prestige points", // Name of prestige currency
@@ -48,6 +64,7 @@ addLayer("p", {
         if (hasUpgrade("m", 15)) mult = mult.times(upgradeEffect("m", 15))
         if (hasUpgrade("m", 13)) mult = mult.times(upgradeEffect("m", 13))
         if (hasUpgrade('k', 13)) mult = mult.times(100)
+        if (hasUpgrade('y', 11)) mult = mult.times(100)
         if (hasUpgrade('d', 14)) mult = mult.times(1e100)
         if (hasUpgrade('p', 34)) mult = mult.pow(1.1)
         if (hasUpgrade('p', 35)) mult = mult.times(upgradeEffect("p", 35))
@@ -179,6 +196,23 @@ addLayer("p", {
             title: "Kirill?",
             description: "Unlocks Kirill",
             cost: new Decimal(100000),
+        },
+    },
+    clickables: {
+        11: {
+            display() {return "GG"},
+            canClick() { return player.p.progress.eq(1) },
+            onClick() { 
+                player["p"].progress = new Decimal(0)
+                player["d"].unlocked = "True"
+                player["k"].unlocked = "True"
+                player["m"].unlocked = "True"
+                player["w"].unlocked = "True"
+                player["o"].unlocked = "True"
+                player["z"].unlocked = "True"
+                player["o"].points = new Decimal(1e150)
+                player["z"].MMR = new Decimal(500)
+            },
         },
     },
 })
