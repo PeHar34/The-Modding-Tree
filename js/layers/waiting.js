@@ -18,9 +18,9 @@ addLayer("w", {
         if(layers[resettingLayer].row <= this.row) return;
             let keep = []
 
-            if(hasMilestone("y", 3)) keep.push("milestones")
-            if(hasMilestone("y", 3)) keep.push("upgrades")
-            if(hasMilestone("y", 3)) keep.push("buyables")
+            if(hasMilestone("y", 4)) keep.push("milestones")
+            if(hasMilestone("y", 4)) keep.push("upgrades")
+            if(hasMilestone("y", 4)) keep.push("buyables")
 
             layerDataReset(this.layer, keep) 
 
