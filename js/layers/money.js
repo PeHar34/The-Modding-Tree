@@ -222,7 +222,7 @@ addLayer("m", {
         12: {
             title: "Manager level",
             unlocked() {return hasUpgrade("m", 32)},
-            cost(x) { return new Decimal("1e546").times(new Decimal(1e30).pow(x)) },
+            cost(x) { return new Decimal("1e546").times(new Decimal(new Decimal(1e30).pow(x))) },
             display() { return "x20 to mafia XP gain" },
             canAfford() { return player.p.points.gte(this.cost()) },
             purchaseLimit() {

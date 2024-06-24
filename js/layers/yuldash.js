@@ -173,12 +173,9 @@ addLayer("y", {
         },
         31: {
             unlocked() {
-                if (hasUpgrade("y", 25)) {
-                    if (hasUpgrade("y", 31)) return false
-                    if (player["r"].unlocked) return false
-                    else return true
-                } 
-                else return false
+                if (hasUpgrade(this.layer, 31)) return false
+                if (player.r.unlocked) return false
+                else return hasUpgrade(this.layer, 25)
             },
             title: "Rage>",
             description: "unlocks rage",

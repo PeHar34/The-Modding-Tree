@@ -200,24 +200,4 @@ addLayer("p", {
             cost: new Decimal(100000),
         },
     },
-    clickables: {
-        11: {
-            display() {return "GG"},
-            canClick() { return player.p.progress.eq(1)},
-            onClick() { 
-                player["p"].progress = new Decimal(0)
-                player["d"].unlocked = "True"
-                player["k"].unlocked = "True"
-                player["m"].unlocked = "True"
-                player["w"].unlocked = "True"
-                player["o"].unlocked = "True"
-                player["z"].unlocked = "True"
-                player["y"].unlocked = "True"
-                player["o"].points = new Decimal(1e150)
-                player["z"].MMR = new Decimal(500)
-                player["y"].points = new Decimal(300)
-                player["y"].total = new Decimal(300)
-            },
-        },
-    },
 })

@@ -380,7 +380,7 @@ addLayer("z", {
                 if (hasUpgrade("y", 14) && hasUpgrade("z", 24)) data.MMRGain = data.MMRGain.times(3)
                 if (hasUpgrade("y", 22)) data.MMRGain = data.MMRGain.times(upgradeEffect("y", 22))
                 if (hasUpgrade("r", 22)) data.MMRGain = data.MMRGain.times(upgradeEffect("r", 22))
-                if (hasUpgrade("r", 22)) data.MMRGain = data.MMRGain.times(upgradeEffect("z", 35))
+                if (hasUpgrade("z", 35)) data.MMRGain = data.MMRGain.times(upgradeEffect("z", 35))
                 if (hasUpgrade("y", 25)) data.MMRGain = data.MMRGain.times(20)
                 if (hasUpgrade("r", 25)) data.MMRGain = data.MMRGain.times(10)
             },

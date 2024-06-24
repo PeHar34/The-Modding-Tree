@@ -5,17 +5,16 @@ addLayer("r", {
     startData() { return{
         unlocked: false,
 		points: new Decimal(1),
-        setBuyableAmount: new Decimal(0),
         chance: new Decimal(0.1),
         time: new Decimal(10),
         rage: new Decimal(1),
     }},
     layerShown() { return player[this.layer].unlocked || hasUpgrade("y", 31) },
     color: "#F5FFFA",
-    requires: new Decimal(0),
+    requirment: new Decimal(1),
     row: "4",
-    resource: "raggggg",
-    baseResource: "yul points",
+    resource: "rag",
+    baseResource: "rag",
     autoPrestige() { return false },
     doReset(resettingLayer) {
         if(layers[resettingLayer].row <= this.row) return;
