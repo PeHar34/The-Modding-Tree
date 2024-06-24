@@ -49,6 +49,7 @@ addLayer("d", {
     gainMult() {
         mult = new Decimal(1)
         if (hasUpgrade("w", 12)) mult = mult.times(upgradeEffect("w", 12))
+        if (hasUpgrade("r", 15)) mult = mult.times(upgradeEffect("r", 15))
         return mult
     },
     directMult() {
@@ -81,7 +82,7 @@ addLayer("d", {
             description: "Mafia XP get boost based on total Dimitron points",
             cost: new Decimal(2),
             effect() {
-                return new Decimal(player.d.total).plus(1)
+                return new Decimal(player.d.total).add(1)
             },
             effectDisplay() {return format(upgradeEffect("d", 13))+"x"},
         },
@@ -142,12 +143,24 @@ addLayer("d", {
         41: {
             unlocked() { 
                 if (player.w.unlocked) return false
-                else return  hasUpgrade("d", 35)
+                if (hasUpgrade(this.layer, 41)) return false
+                else return hasUpgrade("d", 35)
             },
             title: "waiting...",
-            description: "Unlocks waiting(not currently in game)",
+            description: "Unlocks waiting",
             cost: new Decimal(10000),
-        },  
+        }, 
+        51: {
+            unlocked() { return hasUpgrade("r", 15)},
+            title: "dimitron's rageback",
+            description: "dimitron boosts PP rage boost cap",
+            tooltip: "Димитрон обижен на вас, так как вы не пошли грабить банк с ним. По его словам, вместе вас бы не поймали.",
+            cost: new Decimal(10000000),
+            effect() {
+                return new Decimal(player.d.points).add(1).log(1e4).add(1)   
+            },
+            effectDisplay() {return format(upgradeEffect("d", 51))+"x"},
+        },
     },
     milestones: {
         0: {

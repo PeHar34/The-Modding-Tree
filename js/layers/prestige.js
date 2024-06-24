@@ -49,6 +49,7 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('p', 13)) mult = mult.times(upgradeEffect('p', 13))
+        if (hasUpgrade('r', 12)) mult = mult.times(upgradeEffect('r', 12))
         if (hasUpgrade('p', 32)) mult = mult.times(10)
         if (hasUpgrade('o', 11)) mult = mult.times(10)
         if (hasUpgrade('k', 11)) mult = mult.times(2)
@@ -202,7 +203,7 @@ addLayer("p", {
     clickables: {
         11: {
             display() {return "GG"},
-            canClick() { return player.p.progress.eq(1) },
+            canClick() { return player.p.progress.eq(1) && new Decimal(player["r"].rage).lte(-1)},
             onClick() { 
                 player["p"].progress = new Decimal(0)
                 player["d"].unlocked = "True"

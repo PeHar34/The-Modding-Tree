@@ -39,11 +39,14 @@ addLayer("o", {
         mult = new Decimal(1)
         mult = mult.times(buyableEffect("w", 13))
         if (hasUpgrade("y", 11)) mult = mult.times(100)
-        if (hasUpgrade("y", 23)) mult = mult
+        if (hasUpgrade("r", 21)) mult = mult.times(upgradeEffect("r", 21))
         return mult
     },
     softcap() {
         return new Decimal(1e10)
+    },
+    passiveGeneration() {
+        if (hasMilestone("r", 0)) return milestoneEffect("r", 0)
     },
     softcapPower() {
         let data = player["m"]
@@ -120,8 +123,20 @@ addLayer("o", {
                 else return hasUpgrade("o", 25)
             },
             title: "Dota 2",
-            description: "Unlocks Dota 2(not currently in game)",
+            description: "Unlocks Dota 2",
             cost: new Decimal(1e88),
+        },
+        41: {
+            unlocked() {
+                if (player.r.unlocked) return true
+            },
+            title: "unrage",
+            description: "motivation points boosts rage",
+            effect() {      
+                return new Decimal(player[this.layer].points).add(1).log(2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 41))+"x" },
+            cost: new Decimal(1e140),
         },
     },
     milestones: {

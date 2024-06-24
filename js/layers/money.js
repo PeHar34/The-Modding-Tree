@@ -338,6 +338,7 @@ addLayer("m", {
             data.mafiaBarXPgain = data.mafiaBarXPgain.times(buyableEffect(this.layer, 11))
             data.mafiaBarXPgain = data.mafiaBarXPgain.times(buyableEffect(this.layer, 12))
             if (hasUpgrade("k", 51)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(upgradeEffect("k", 51))
+            if (hasUpgrade("r", 14)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(upgradeEffect("r", 14))
             if (hasUpgrade("k", 52)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(5)
             if (hasUpgrade("o", 11)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(10)
             if (hasUpgrade("m", 33)) data.mafiaBarXPgain = data.mafiaBarXPgain.times(20)

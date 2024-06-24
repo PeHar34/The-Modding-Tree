@@ -9,7 +9,7 @@ addLayer("y", {
         setBuyableAmount: new Decimal(0)
     }},
     layerShown() { return player[this.layer].unlocked || hasUpgrade("z", 25) },
-    color: "#D3D3D3",
+    color: "#F5FFFA",
     requires: new Decimal(200),
     row: "4",
     resource: "Yul points",
@@ -43,6 +43,7 @@ addLayer("y", {
     },
     gainMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("r", 23)) mult = mult.mul(upgradeEffect("r", 23))
         return mult
     },
     directMult() {
@@ -172,12 +173,41 @@ addLayer("y", {
         },
         31: {
             unlocked() {
-                if (hasUpgrade("y", 25)) return true
+                if (hasUpgrade("y", 25)) {
+                    if (hasUpgrade("y", 31)) return false
+                    if (player["r"].unlocked) return false
+                    else return true
+                } 
                 else return false
             },
             title: "Rage>",
-            description: "unlocks rage(not currently in game)",
+            description: "unlocks rage",
             cost: new Decimal(100),
+        },
+        32: {
+            unlocked() {
+                if (hasUpgrade("r", 23)) return true
+                else return false
+            },
+            title: "Yourself rage?",
+            description: "Yul points boosts rage",
+            tooltip: "Рейджить на себя странно в конце концов.",
+            effect() {
+                return player["y"].points.pow(2)
+            },
+            effectDisplay() {
+                return "x" + upgradeEffect("y", 32)+ " rage"
+            },
+            cost: new Decimal(6000),
+        },
+        33: {
+            unlocked() {
+                if (hasUpgrade("z", 35)) return true
+                else return false
+            },
+            title: "Danus",
+            description: "Unlocks Danus(not currently in game)",
+            cost: new Decimal(100000000),
         },
     },
     milestones: {

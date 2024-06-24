@@ -2,8 +2,19 @@ addLayer("z", {
     name: "Dota 2",
     symbol: "z",
     position: 1,
+    hotkeys: [
+        {key: "1", onPress(){clickClickable("z", "31") }},
+        {key: "2", onPress(){clickClickable("z", "32") }},
+        {key: "3", onPress(){clickClickable("z", "33") }},
+        {key: "4", onPress(){clickClickable("z", "34") }},
+    ],
     startData() { return {
         unlocked: false,
+        macro: new Decimal(0),
+        expectedButton: new Decimal(0),
+        pressedButton: new Decimal(0),
+        micro: new Decimal(0),
+        cycle: new Decimal(0),
 		points: new Decimal(0),
         req: new Decimal(50),
         total: new Decimal(0),
@@ -26,6 +37,9 @@ addLayer("z", {
         pickChance: new Decimal(0),
         playTime2 : new Decimal(0),
         play2 : new Decimal(0),
+        playTime3 : new Decimal(0),
+        realplayTime3: new Decimal(0),
+        play3 : new Decimal(0),
         pickChance1: new Decimal(0),
         power1: new Decimal(0),
         pickChance2: new Decimal(0),
@@ -60,9 +74,11 @@ addLayer("z", {
     autoPrestige() { return false },
     doReset(resettingLayer) {
         if(layers[resettingLayer].row <= this.row) return;
-            let keep = []
+            let keep = [player[this.layer].micro, player[this.layer].macro, ]
 
-            layerDataReset(this.layer, keep) 
+            layerDataReset(this.layer)
+            player[this.layer].micro = keep[0]
+            player[this.layer].macro = keep[1]
     },
     resetsNothing() { return true },
     baseAmount() {return player.o.points},
@@ -77,7 +93,9 @@ addLayer("z", {
         return mult
     },
     canBuyMax() { return true },
-    tabFormat: [
+    tabFormat: {
+        "Dota 2": {
+        content: [
         "main-display",
         "prestige-button",
         "total",
@@ -185,14 +203,85 @@ addLayer("z", {
         ]],
         "blank",
         ["display-text",
-            function() { return "MMR: " +format(player[this.layer].MMR) }
+            function() { 
+                let MMRlimit = new Decimal(1e10).mul(new Decimal(5).pow(player[this.layer].macro.add(player[this.layer].micro)))
+                return "MMR: " + format(player[this.layer].MMR) + " / " + format(MMRlimit)
+            }
         ],
         "blank",
         "upgrades",
         "blank",
-        "milestones",
-        "blank",
-    ],
+        ]},
+        "ImmortalDraft": {
+            name: "Immortal Draft",
+            content: [
+                ["infobox", "12"],
+                ["blank", "30px"],
+                ["display-text",
+                    function() { return "<h1>Macro skill level: " + format(player[this.layer].macro) + "</h1>"}
+                ],
+                ["display-text",
+                    function() { 
+                        let req = new Decimal(500000).mul(new Decimal(player[this.layer].macro).add(1))
+                        let color = "#FFFFFF"
+                        if (player.k.points.gte(req)) color = "#32CD32"
+                        return "<h4><font color="+ color +">IQ needed for level up: " + format(player.k.points) +" / "+format(req) + "</font></h4>"
+                    }
+                ],
+                ["blank", "10px"],
+                ["clickable", "41"],
+                ["blank", "30px"],
+                ["display-text",
+                    function() { return "<h1>Micro skill level: " + format(player[this.layer].micro) + "</h1>"}
+                ],
+                ["display-text",
+                    function() { 
+                        let req = new Decimal(1e10).mul(new Decimal(10).pow(player[this.layer].micro))
+                        let color = "#FFFFFF"
+                        if (player.z.energy.gte(req)) color = "#32CD32"
+                        return "<h4><font color="+ color +">Energy needed for level up attemp: " + format(player.z.energy) +" / "+format(req) + "</font></h4>"
+                    }
+                ],
+                ["blank", "10px"],
+                ["clickable", "42"],
+                ["blank", "30px"],
+                ["display-text",
+                    function() { 
+                        let Button = new Decimal(0)
+                        if (new Decimal(player[this.layer].expectedButton).eq(new Decimal(1))) Button = "1"
+                        if (new Decimal(player[this.layer].expectedButton).eq(new Decimal(2))) Button = "2"
+                        if (new Decimal(player[this.layer].expectedButton).eq(new Decimal(3))) Button = "3"
+                        if (new Decimal(player[this.layer].expectedButton).eq(new Decimal(4))) Button = "4"
+                        let color = "#FFFFFF"
+                        if (new Decimal(player[this.layer].pressedButton).eq(player[this.layer].expectedButton) & !new Decimal(player[this.layer].pressedButton).eq(new Decimal(0))) color = "#32CD32"
+                        if (!player[this.layer].pressedButton.eq(player[this.layer].expectedButton) & !new Decimal(player[this.layer].pressedButton).eq(new Decimal(0))) color = "red"
+                        if (new Decimal(Button).eq(new Decimal(0))) Button = ""
+                        return "<h1><font size=12 color="+ color +">"+Button+"</font></h1>"
+                    }
+                ],
+                ["blank", "30px"],
+                ["row", [
+                    ["clickable", "31"],
+                    ["clickable", "32"],
+                    ["clickable", "33"],
+                    ["clickable", "34"],
+                ]],
+                ["blank", "10px"],
+                "milestones",
+            ],
+            unlocked() { return hasUpgrade("r", 31) || tmp.z.tabFormat.ImmortalDraft.unlocked },
+        },
+    },
+    infoboxes: {
+        12: {
+            title: "Immortal Draft",
+            body() { 
+                return "Для игры на рангах Титан вам нужны отличные умения.\n\
+                Именно поэтому теперь вы можете тренировать свой микро скилл.\n\
+                Это поможет вам увеличить максимальный ММР, который вы можете получить, а также ускорит игры."
+            },
+        },
+    },
     bars: {
         bar1: {
             unlocked() { return true },
@@ -290,7 +379,10 @@ addLayer("z", {
                 if (hasUpgrade("y", 13)) data.MMRGain = data.MMRGain.times(4)
                 if (hasUpgrade("y", 14) && hasUpgrade("z", 24)) data.MMRGain = data.MMRGain.times(3)
                 if (hasUpgrade("y", 22)) data.MMRGain = data.MMRGain.times(upgradeEffect("y", 22))
+                if (hasUpgrade("r", 22)) data.MMRGain = data.MMRGain.times(upgradeEffect("r", 22))
+                if (hasUpgrade("r", 22)) data.MMRGain = data.MMRGain.times(upgradeEffect("z", 35))
                 if (hasUpgrade("y", 25)) data.MMRGain = data.MMRGain.times(20)
+                if (hasUpgrade("r", 25)) data.MMRGain = data.MMRGain.times(10)
             },
         },
         21: {
@@ -453,6 +545,58 @@ addLayer("z", {
                 Hero power: " + format(player[this.layer].power5) + "%"
             },
         },
+        31: {
+            display() {return "<h1>1</h1>"},
+            canClick() { return player[this.layer].pressedButton.eq(new Decimal(0)) & player[this.layer].play3.eq(new Decimal(1)) },
+            onClick() { 
+                player[this.layer].pressedButton = new Decimal(1)
+            },
+        },
+        32: {
+            display() {return "<h1>2</h1>"},
+            canClick() { return player[this.layer].pressedButton.eq(new Decimal(0)) & player[this.layer].play3.eq(new Decimal(1)) },
+            onClick() { 
+                player[this.layer].pressedButton = new Decimal(2)
+            },
+        },
+        33: {
+            display() {return "<h1>3</h1>"},
+            canClick() { return player[this.layer].pressedButton.eq(new Decimal(0)) & player[this.layer].play3.eq(new Decimal(1)) },
+            onClick() { 
+                player[this.layer].pressedButton = new Decimal(3)
+            },
+        },
+        34: {
+            display() {return "<h1>4</h1>"},
+            canClick() { return player[this.layer].pressedButton.eq(new Decimal(0)) & player[this.layer].play3.eq(new Decimal(1)) },
+            onClick() { 
+                player[this.layer].pressedButton = new Decimal(4)
+            },
+        },
+        41: {
+            display() {return "Level up"},
+            canClick() { 
+                let req = new Decimal(500000).mul(new Decimal(player[this.layer].macro).add(1))
+                if (player.k.points.gte(req)) return true
+                else return false
+            },
+            onClick() { 
+                player[this.layer].macro = player[this.layer].macro.add(1)
+            },
+        },
+        42: {
+            display() {return "Level up attemp"},
+            canClick() { 
+                let req = new Decimal(1e10).mul(new Decimal(10).pow(player[this.layer].micro))
+                if (player[this.layer].energy.gte(req) & player[this.layer].play3.eq(new Decimal(0)) ) return true
+                else return false
+            },
+            onClick() { 
+                let req = new Decimal(1e10).mul(new Decimal(10).pow(player[this.layer].micro))
+                player.z.energy = player.z.energy.sub(req)
+                player[this.layer].play3 = new Decimal(1)
+            },
+        },
     },
     update(diff) {
         let data = player[this.layer]
@@ -462,23 +606,29 @@ addLayer("z", {
             if (hasUpgrade("z", 25)) data.energyGain1 = new Decimal(data.energyGain1).mul(5)
             if (hasUpgrade("y", 11)) data.energyGain1 = new Decimal(data.energyGain1).mul(2)
             if (hasUpgrade("y", 21)) data.energyGain1 = new Decimal(data.energyGain1).times(upgradeEffect("y", 21))
+            if (hasUpgrade("z", 33)) data.energyGain1 = new Decimal(data.energyGain1).times(upgradeEffect("z", 33))
+            if (hasUpgrade("z", 34)) data.energyGain1 = new Decimal(data.energyGain1).times(upgradeEffect("z", 34))
             data.energy = data.energy.plus(data.energyGain1)
         }
         if (data.progress2.gte(0.1)) {
             data.poopChance = new Decimal(Math.random())
-            data.energyGain2 =  new Decimal(5).pow(data.progress2.times(10).sub(1)).times(3) * diff
+            data.energyGain2 =  new Decimal(7).pow(data.progress2.times(10).sub(1)).times(3) * diff
             if (hasUpgrade("z", 11)) data.energyGain2 = new Decimal(data.energyGain2).mul(3)
             if (hasUpgrade("z", 25)) data.energyGain2 = new Decimal(data.energyGain2).mul(5)
             if (hasUpgrade("y", 11)) data.energyGain2 = new Decimal(data.energyGain2).mul(2)
             if (hasUpgrade("y", 21)) data.energyGain2 = new Decimal(data.energyGain2).times(upgradeEffect("y", 21))
+            if (hasUpgrade("z", 33)) data.energyGain2 = new Decimal(data.energyGain2).times(upgradeEffect("z", 33))
+            if (hasUpgrade("z", 34)) data.energyGain2 = new Decimal(data.energyGain2).times(upgradeEffect("z", 34))
             data.energy = data.energy.plus(data.energyGain2)
             data.poopGain = new Decimal(0.03).times(data.progress2.times(10)) * diff
             if (hasUpgrade("z", 21)) data.poopGain = new Decimal(data.poopGain).div(3)
+            if (hasUpgrade("z", 32)) data.poopGain = new Decimal(data.poopGain).div(30)
             data.progress3 = data.progress3.plus(data.poopGain)
         }
         if (data.progress2.lte(0) && data.progress3.gte(0)) {
             let poopDic = new Decimal(0.001)
             if (hasUpgrade("z", 21)) poopDic = new Decimal(poopDic).mul(3)
+            if (hasUpgrade("z", 32)) poopDic = new Decimal(poopDic).mul(30)
             data.progress3 = new Decimal(data.progress3.sub(poopDic))
         }
         if (data.poopChance.lte(data.progress3.div(100))) {
@@ -491,6 +641,7 @@ addLayer("z", {
             if (hasUpgrade("z", 23)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
             if (hasUpgrade("y", 11)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
             if (hasUpgrade("y", 23)) gameSpeed = new Decimal(gameSpeed).mul(2)
+            gameSpeed = gameSpeed.mul(1.5).pow(player[this.layer].micro.add(player[this.layer].macro))
             data.playTime = new Decimal(data.playTime).plus(gameSpeed * diff )
             if (new Decimal(data.playTime).gte(0) && new Decimal(data.playTime).lte(3)) data.playText = new String("Подбор игроков...")
             if (new Decimal(data.playTime).gte(3)) {
@@ -540,6 +691,7 @@ addLayer("z", {
             if (hasUpgrade("z", 12)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
             if (hasUpgrade("z", 23)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
             if (hasUpgrade("y", 11)) gameSpeed = new Decimal(gameSpeed).mul(1.5)
+            gameSpeed = gameSpeed.mul(1.5).pow(player[this.layer].micro.add(player[this.layer].macro))
             data.playTime2 = new Decimal(data.playTime2).plus(gameSpeed * diff)
             if (new Decimal(data.playTime2).lte(3) && new Decimal(data.cpick).eq(0))  data.playText = new String("Вас не контрПикнули")
             if (new Decimal(data.playTime2).lte(3) && new Decimal(data.cpick).eq(1))  data.playText = new String("Вас контрПикнули")
@@ -556,7 +708,9 @@ addLayer("z", {
                     data.winChance = data.winChance.div(1.1)
                     if (hasUpgrade("y", 11)) data.winChance = data.winChance.mul(1.2)
                     if (hasUpgrade("y", 23)) data.winChance = data.winChance.mul(1.1)
-                    data.MMR = new Decimal(data.MMR).plus(data.MMRGain)
+                    let MMRlimit = new Decimal(1e10).mul(new Decimal(5).pow(player[this.layer].macro.add(player[this.layer].micro)))
+                    if (new Decimal(data.MMR).plus(data.MMRGain).gte(MMRlimit)) data.MMR = new Decimal(MMRlimit)
+                    else data.MMR = new Decimal(data.MMR).plus(data.MMRGain)
                 }
                 if (new Decimal(data.win).eq(0)) { 
                     data.winChance = new Decimal(80)
@@ -576,6 +730,63 @@ addLayer("z", {
                 data.win = new Decimal(0)
                 data.playTime2 = new Decimal(0)
             }
+        }
+        if (new Decimal(data.play3).eq(1)) {
+            let gameSpeed = new Decimal(1)
+            gameSpeed = gameSpeed.mul(1.1).pow(player[this.layer].micro)
+            data.playTime3 = new Decimal(data.playTime3).plus(gameSpeed * diff)
+            data.realplayTime3 = new Decimal(data.realplayTime3).plus(diff)
+            if (data.cycle.eq(new Decimal(0))) {
+                data.cycle = data.cycle.add(1)
+                let expectedButtonCode = new Decimal(Math.floor(Math.random() * 100))
+                if (expectedButtonCode.lte(30)) data.expectedButton = new Decimal(1)
+                if (expectedButtonCode.lte(60) & expectedButtonCode.gte(30)) data.expectedButton = new Decimal(2)
+                if (expectedButtonCode.lte(90) & expectedButtonCode.gte(60)) data.expectedButton = new Decimal(3)
+                if (expectedButtonCode.gte(90)) data.expectedButton = new Decimal(4)
+            }
+            if (data.playTime3.gte(4)) {
+                if (new Decimal(data.expectedButton).eq(data.pressedButton)) {
+                    data.pressedButton = new Decimal(0)
+                    data.playTime3 = new Decimal(0)
+                    let expectedButtonCode = new Decimal(Math.floor(Math.random() * 100))
+                    if (expectedButtonCode.lte(30)) data.expectedButton = new Decimal(1)
+                    if (expectedButtonCode.lte(60) & expectedButtonCode.gte(30)) data.expectedButton = new Decimal(2)
+                    if (expectedButtonCode.lte(90) & expectedButtonCode.gte(60)) data.expectedButton = new Decimal(3)
+                    if (expectedButtonCode.gte(90)) data.expectedButton = new Decimal(4)
+                    let gameSpeed = new Decimal(1)
+                    gameSpeed = gameSpeed.mul(new Decimal(1.1).pow(player[this.layer].micro))
+                    if (new Decimal(new Decimal(20).sub(data.realplayTime3)).lte(new Decimal(4).div(gameSpeed))) {
+                        data.pressedButton = new Decimal(0) 
+                        data.expectedButton = new Decimal(0)
+                        data.play3 = new Decimal(0)
+                        data.realplayTime3 = new Decimal(0)
+                        data.playTime3 = new Decimal(0)
+                        data.cycle = new Decimal(0)
+                        data.micro = data.micro.add(1)
+                    }
+                }
+                else {
+                    data.pressedButton = new Decimal(0)
+                    data.expectedButton = new Decimal(0)
+                    data.play3 = new Decimal(0)
+                    data.realplayTime3 = new Decimal(0)
+                    data.playTime3 = new Decimal(0)
+                    data.cycle = new Decimal(0)
+                }
+            }
+            if (data.realplayTime3.gte(20) ) {
+                data.pressedButton = new Decimal(0)
+                data.expectedButton = new Decimal(0)
+                data.play3 = new Decimal(0)
+                data.realplayTime3 = new Decimal(0)
+                data.playTime3 = new Decimal(0)
+                data.cycle = new Decimal(0)
+                data.micro = data.micro.add(1)
+            }
+        }
+        if (hasMilestone("z", 0)) {
+            let MMRlimit = new Decimal(1e10).mul(new Decimal(5).pow(player[this.layer].macro.add(player[this.layer].micro)))
+            if (!player[this.layer].MMR.eq(MMRlimit)) clickClickable("z", 15)
         }
     },
     upgrades: {
@@ -668,6 +879,75 @@ addLayer("z", {
             currencyInternalName() { return "MMR" },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName() { return "MMR" },
+        },
+        31: {
+            unlocked() {return hasUpgrade("r", 22) && hasUpgrade("z", 25)},
+            title: "raging on game",
+            description: "MMR boosts rage and rage speed ^1.5",
+            cost: new Decimal(5000),
+            currencyInternalName() { return "MMR" },
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName() { return "MMR" },
+            effect() {
+                return new Decimal(player[this.layer].MMR).add(1).pow(5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 31))+"x" },
+        },
+        32: {
+            unlocked() {return hasUpgrade("z", 31) & tmp.z.tabFormat.ImmortalDraft.unlocked},
+            title: "Buttplug",
+            description: "Poopchance /30",
+            cost: new Decimal(2.5e11),
+            currencyInternalName() { return "MMR" },
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName() { return "MMR" },
+        },
+        33: {
+            unlocked() {return hasUpgrade("z", 32)},
+            title: "acts overflow",
+            description: "total acts boosts energy",
+            cost: new Decimal(1.25e12),
+            currencyInternalName() { return "MMR" },
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName() { return "MMR" },
+            effect() {
+                return player.z.total.mul(2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 33))+"x" },
+        },
+        34: {
+            unlocked() {return hasUpgrade("z", 33)},
+            title: "MMR motivation",
+            description: "MMR boosts energy",
+            cost: new Decimal(4e12),
+            currencyInternalName() { return "MMR" },
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName() { return "MMR" },
+            effect() {
+                return player.z.MMR.div(1e11)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 34))+"x" },
+        },
+        35: {
+            unlocked() {return hasUpgrade("z", 34)},
+            title: "skill result",
+            description: "MMR boost based on skill",
+            cost: new Decimal(1e13),
+            currencyInternalName() { return "MMR" },
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName() { return "MMR" },
+            effect() {
+                return player.z.macro.add(player.z.micro).mul(5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, 35))+"x" },
+        },
+    },
+    milestones: {
+        0: {
+            unlocked() {return hasMilestone("z", 0) },
+            requirementDescription: "Micro level 5",
+            effectDescription: "Auto play Dota",
+            done() { return player.z.micro.gte(5) },
         },
     },
 })

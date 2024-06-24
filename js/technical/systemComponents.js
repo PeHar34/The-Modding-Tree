@@ -132,15 +132,9 @@ var systemComponents = {
             <br>
             Made by {{modInfo.author}}	
         </span>
-        <br>
-        The Modding Tree <a v-bind:href="'https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md'" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}" >{{TMT_VERSION.tmtNum}}</a> by Acamaeda
-        <br>
-        The Prestige Tree made by Jacorb and Aarex
 		<br><br>
 		<div class="link" onclick="showTab('changelog-tab')">Changelog</div><br>
-        <span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
-        <a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
-        <a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br>
+        <a class="link" href="https://discord.gg/SvdurxWVPp" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">2 Dollars discord</a><br>
 		<br><br>
         Time Played: {{ formatTime(player.timePlayed) }}<br><br>
         <h3>Hotkeys</h3><br>
