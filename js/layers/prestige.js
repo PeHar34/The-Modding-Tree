@@ -217,7 +217,6 @@ addLayer("p", {
                 player["z"].MMR = new Decimal(500)
                 player["y"].points = new Decimal(300)
                 player["y"].total = new Decimal(300)
-                
             },
         },
     },
