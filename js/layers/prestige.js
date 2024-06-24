@@ -5,7 +5,7 @@ addLayer("p", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
-        progress: new Decimal(1)
+        progress: new Decimal(0)
     }},
     doReset(resettingLayer) {
         let keep = []
@@ -212,10 +212,11 @@ addLayer("p", {
                 player["w"].unlocked = "True"
                 player["o"].unlocked = "True"
                 player["z"].unlocked = "True"
+                player["y"].unlocked = "True"
                 player["o"].points = new Decimal(1e150)
                 player["z"].MMR = new Decimal(500)
-                player["y"].points = new Decimal(0)
-                player["y"].total = new Decimal(0)
+                player["y"].points = new Decimal(300)
+                player["y"].total = new Decimal(300)
                 
             },
         },
