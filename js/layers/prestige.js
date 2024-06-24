@@ -5,7 +5,7 @@ addLayer("p", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
-        progress: new Decimal(0)
+        progress: new Decimal(1),
     }},
     doReset(resettingLayer) {
         let keep = []
@@ -203,7 +203,7 @@ addLayer("p", {
     clickables: {
         11: {
             display() {return "GG"},
-            canClick() { return player.p.progress.eq(1) && new Decimal(player["r"].rage).lte(-1)},
+            canClick() { return player.p.progress.eq(1)},
             onClick() { 
                 player["p"].progress = new Decimal(0)
                 player["d"].unlocked = "True"
