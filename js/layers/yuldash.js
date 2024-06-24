@@ -202,7 +202,7 @@ addLayer("y", {
         },
         33: {
             unlocked() {
-                if (hasUpgrade("z", 35)) return true
+                if (hasUpgrade("z", 35) ) return true
                 else return false
             },
             title: "Danus",

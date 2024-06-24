@@ -3,7 +3,7 @@ let modInfo = {
 	id: "8318",
 	author: "Danus",
 	pointsName: "points",
-	modFiles: ["layers/prestige.js", "layers/kirill.js", "layers/money.js", "layers/waiting.js","tree.js", "layers/dimitron.js", "layers/oscar.js", "layers/dota.js", "layers/yuldash.js", "layers/Rage.js", ],
+	modFiles: ["layers/prestige.js", "layers/kirill.js", "layers/money.js", "layers/waiting.js","tree.js", "layers/dimitron.js", "layers/oscar.js", "layers/dota.js", "layers/yuldash.js", "layers/rage.js", ],
 
 	discordName: "2dollars",
 	discordLink: "https://discord.gg/SvdurxWVPp",
