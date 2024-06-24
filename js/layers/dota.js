@@ -924,7 +924,7 @@ addLayer("z", {
             currencyLocation() { return player[this.layer] },
             currencyDisplayName() { return "MMR" },
             effect() {
-                return player.z.MMR.div(1e11)
+                return player.z.MMR.div(1e11).add(1)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, 34))+"x" },
         },
@@ -937,7 +937,7 @@ addLayer("z", {
             currencyLocation() { return player[this.layer] },
             currencyDisplayName() { return "MMR" },
             effect() {
-                return player.z.macro.add(player.z.micro).mul(5)
+                return player.z.macro.add(player.z.micro).add(1).mul(5)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, 35))+"x" },
         },
