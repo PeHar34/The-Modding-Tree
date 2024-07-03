@@ -625,7 +625,7 @@ addLayer("z", {
             if (hasUpgrade("z", 32)) data.poopGain = new Decimal(data.poopGain).div(30)
             data.progress3 = data.progress3.plus(data.poopGain)
         }
-        if (data.progress2.lte(0) && data.progress3.gte(0)) {
+        if (tmp[this.layer].progress2.lte(0) && data.progress3.gte(0)) {
             let poopDic = new Decimal(0.001)
             if (hasUpgrade("z", 21)) poopDic = new Decimal(poopDic).mul(3)
             if (hasUpgrade("z", 32)) poopDic = new Decimal(poopDic).mul(30)
