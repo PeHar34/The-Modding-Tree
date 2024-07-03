@@ -8,16 +8,17 @@ addLayer("p", {
         progress: new Decimal(1),
     }},
     doReset(resettingLayer) {
-        let keep = []
+        if(layers[resettingLayer].row <= this.row) return;
+            let keep = []
       
-        if(hasMilestone("k", 0))keep.push(11, 12, 13, 14, 15, 21)
-        if(hasMilestone("k", 1))keep.push(31, 32, 33, 34, 35, 41)
-        if(hasMilestone("d", 0))keep.push(11, 12, 13, 14, 15, 21, 31, 32, 33, 34, 35, 41)
-        if(hasMilestone("y", 0))keep.push(11, 12, 13, 14, 15, 21, 31, 32, 33, 34, 35, 41)
-        if(layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep) 
+            if(hasMilestone("k", 0))keep.push(11, 12, 13, 14, 15, 21)
+            if(hasMilestone("k", 1))keep.push(31, 32, 33, 34, 35, 41)
+            if(hasMilestone("d", 0))keep.push(11, 12, 13, 14, 15, 21, 31, 32, 33, 34, 35, 41)
+            if(hasMilestone("y", 0))keep.push(11, 12, 13, 14, 15, 21, 31, 32, 33, 34, 35, 41)
+            layerDataReset(this.layer) 
 
-        if(layers[resettingLayer].row > this.row) player[this.layer].upgrades = keep
-        player["p"].progress = new Decimal(0)
+            player[this.layer].upgrades = keep
+            player["p"].progress = new Decimal(0)
     },
     tabFormat: [
         "main-display",

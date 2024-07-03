@@ -20,7 +20,7 @@ addLayer("m", {
         if (hasMilestone("y", 2) || hasMilestone("d", 2)) return true
         else return false
     },
-    resetsNothing() { return hasMilestone("d", 2)},
+    resetsNothing() { return hasMilestone("d", 2) || hasMilestone("y", 2)},
     doReset(resettingLayer) {
         if(layers[resettingLayer].row <= this.row) return;
             let keep = []
@@ -287,11 +287,12 @@ addLayer("m", {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
             if (hasUpgrade("o", 24) || hasUpgrade("y", 13)) {
-                canBuy = new Decimal(Math.floor(new Decimal(player.points).div(1e197).log(1e15)))
+                canBuy = new Decimal(Math.floor((new Decimal(player.points).div(1e197)).log(1e15).add(1)))
                 if (canBuy.gte(1)) {
                     if (canBuy.gte(limit)) setBuyableAmount(this.layer, 11, limit);
                     else setBuyableAmount(this.layer, 11, canBuy) 
-                }}  
+                }
+            }  
             else addBuyables(this.layer, 11, canBuy)
             updateBuyableTemp(this.layer);
         }
@@ -299,11 +300,12 @@ addLayer("m", {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["12"].purchaseLimit)
             if (hasUpgrade("o", 24)|| hasUpgrade("y", 13)) {
-                canBuy = new Decimal(Math.floor(new Decimal(player.p.points).div("1e526").log(1e30)))
+                canBuy = new Decimal(Math.floor(new Decimal(player.p.points).div("1e526").log(1e30).add(1)))
                 if (canBuy.gte(1)) {
                     if (canBuy.gte(limit)) setBuyableAmount(this.layer, 12, limit);
                     else setBuyableAmount(this.layer, 12, canBuy) 
-                }}  
+                }
+            }  
             else addBuyables(this.layer, 12, canBuy)
             updateBuyableTemp(this.layer);
         }
@@ -315,7 +317,8 @@ addLayer("m", {
                 if (canBuy.gte(1)) {
                     if (canBuy.gte(limit)) setBuyableAmount(this.layer, 13, limit);
                     else setBuyableAmount(this.layer, 13, canBuy) 
-                }}  
+                }
+            }  
             else addBuyables(this.layer, 13, canBuy)
             updateBuyableTemp(this.layer);
         }

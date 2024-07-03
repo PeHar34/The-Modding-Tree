@@ -2,16 +2,15 @@ addLayer("r", {
     name: "Rage",
     symbol: "r",
     position: 1,
-    startData() { return{
+    startData() { return {
         unlocked: false,
 		points: new Decimal(1),
         chance: new Decimal(0.1),
         time: new Decimal(10),
         rage: new Decimal(1),
     }},
-    layerShown() { return player[this.layer].unlocked || hasUpgrade("y", 31) },
+    layerShown() { return player[this.layer].unlocked},
     color: "#F5FFFA",
-    requirment: new Decimal(1),
     row: "4",
     resource: "rag",
     baseResource: "rag",
@@ -23,7 +22,7 @@ addLayer("r", {
             layerDataReset(this.layer, keep) 
     },
     resetsNothing() { return false },
-    baseAmount() {return player["y"].points},
+    baseAmount() {return player["r"].points},
     type: "normal",
     tabFormat: [
         ["display-text", 
@@ -250,9 +249,9 @@ addLayer("r", {
         if (hasUpgrade("z", 31)) time = time.div(upgradeEffect("z", 31))
         let basesoftcap = new Decimal(data.rage).pow(1/10).add(1)
         let add = new Decimal(data.rage).mul(new Decimal(chance).div(time).div(basesoftcap)).mul(diff)
-        let softcapcap = new Decimal(2)
-        if (hasUpgrade("r", 11)) softcapcap = new Decimal(5)
-        if (hasUpgrade("r", 12)) softcapcap = new Decimal(10)
+        let softcapcap = new Decimal(3)
+        if (hasUpgrade("r", 11)) softcapcap = new Decimal(6)
+        if (hasUpgrade("r", 12)) softcapcap = new Decimal(12)
         if (hasUpgrade("r", 13)) softcapcap = new Decimal(20000)
         if (hasUpgrade("r", 14)) softcapcap = new Decimal(1.2e20)
         if (hasUpgrade("r", 15)) softcapcap = new Decimal(1e32)

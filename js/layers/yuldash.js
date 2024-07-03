@@ -180,6 +180,18 @@ addLayer("y", {
             title: "Rage>",
             description: "unlocks rage",
             cost: new Decimal(100),
+            onPurchase() {
+                player.r.unlocked = "True"
+                layerDataReset("y")
+                layerDataReset("w")
+                layerDataReset("d")
+                layerDataReset("o")
+                layerDataReset("z")
+                layerDataReset("p")
+                layerDataReset("m")
+                layerDataReset("k")
+                player.points = new Decimal(10)
+            },
         },
         32: {
             unlocked() {

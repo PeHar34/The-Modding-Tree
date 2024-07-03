@@ -15,8 +15,7 @@ addLayer("k", {
     baseResource: "prestige points",
     autoPrestige() { 
         if (hasUpgrade("y", 12) || hasMilestone("d", 1)) return true
-        else return false
-        
+        else return false     
     },
     doReset(resettingLayer) {
         if(layers[resettingLayer].row <= this.row) return;
@@ -56,7 +55,7 @@ addLayer("k", {
     },
     canBuyMax() { return hasUpgrade("k", 13) || player.d.unlocked },
     automate() {
-        if (hasUpgrade("w", 14) || hasUpgrade("o", 24) || hasUpgrade("y", 12) && canBuyBuyable(this.layer, 11)) {
+        if ((hasUpgrade("w", 14) || hasUpgrade("o", 24) || hasUpgrade("y", 12)) && canBuyBuyable(this.layer, 11)) {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
             if (hasUpgrade("o", 22)) {
@@ -74,7 +73,7 @@ addLayer("k", {
                 }}  
                 else addBuyables(this.layer, 11, canBuy)
             }
-        updateBuyableTemp(this.layer);
+            updateBuyableTemp(this.layer);
         }
     },
     buyables: {
