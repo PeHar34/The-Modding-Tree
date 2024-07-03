@@ -259,7 +259,7 @@ addLayer("r", {
         if (hasUpgrade("r", 22)) softcapcap = new Decimal("1e10000")
         if (hasUpgrade("r", 23)) softcapcap = new Decimal("1e10000")
         if (hasUpgrade("r", 24)) softcapcap = new Decimal("1e10000")
-        if (hasUpgrade("r", 25)) softcapcap = new Decimal("1e10000")
+        if (hasUpgrade("r", 25)) softcapcap = new Decimal("1e1000000")
         let softcap = new Decimal(data.rage).div(softcapcap).add(1).pow(5)
         if ((new Decimal(data.rage).add(add)).gte(softcapcap)) {
             add = new Decimal(add).div(softcap)
