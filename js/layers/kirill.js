@@ -55,7 +55,7 @@ addLayer("k", {
     },
     canBuyMax() { return hasUpgrade("k", 13) || player.d.unlocked },
     automate() {
-        if ((hasUpgrade("w", 14) || hasUpgrade("o", 24) || hasUpgrade("y", 12)) && canBuyBuyable(this.layer, 11)) {
+        if ((hasUpgrade("w", 14) || hasUpgrade("o", 15) || hasUpgrade("y", 12)) && canBuyBuyable(this.layer, 11)) {
             let canBuy = new Decimal(1)
             let limit = new Decimal(tmp[this.layer].buyables["11"].purchaseLimit)
             if (hasUpgrade("o", 22)) {
