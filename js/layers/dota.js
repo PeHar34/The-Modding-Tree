@@ -83,6 +83,7 @@ addLayer("z", {
     resetsNothing() { return true },
     baseAmount() {return player.o.points},
     type: "custom",
+    autoPrestige() { return true },
     gainMult() {
         mult = new Decimal(1)
         return mult
