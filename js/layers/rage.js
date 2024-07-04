@@ -223,12 +223,12 @@ addLayer("r", {
         },
         32: {
             unlocked() { 
-                if (new Decimal(player.z.micro).gte(23)) return true
+                if (new Decimal(player.z.micro).gte(22)) return true
                 else false
             },
             title: "Danus",
             description: "Unlocks Danus(not currently in game)",
-            cost: new Decimal("1e57000"),
+            cost: new Decimal("1e56000"),
             currencyInternalName() { return "rage" },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName() { return "rage" },
