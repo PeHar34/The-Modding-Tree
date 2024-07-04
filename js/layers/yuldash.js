@@ -235,7 +235,7 @@ addLayer("y", {
         },
         35: {
             unlocked() {
-                if (player.z.micro.gte(21)) return true
+                if (player.z.micro.gte(18)) return true
                 else return false
             },
             title: "Genius",
