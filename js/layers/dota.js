@@ -393,6 +393,7 @@ addLayer("z", {
             },
         },
         16: {
+            unlocked() { return hasUpgrade("y", 36) },
             display() {
                 let data = player[this.layer]
                 if (data.timeMan.eq(0)) return "On"
