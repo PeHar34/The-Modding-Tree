@@ -214,7 +214,7 @@ addLayer("y", {
                 if (hasUpgrade("z", 35) || player.y.points.gte(1e8) ) return true
                 else return false
             },
-            title: "Flesh",
+            title: "Flash",
             description: "x1e6 energy",
             cost: new Decimal(200000000),
         },
