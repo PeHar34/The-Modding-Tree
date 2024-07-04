@@ -249,7 +249,7 @@ addLayer("y", {
             },
             title: "Time being",
             description: "Your senses are heightened, time for you is value now",
-            cost: new Decimal(1e13),
+            cost: new Decimal(5e12),
         },
     },
     milestones: {
