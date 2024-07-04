@@ -211,12 +211,45 @@ addLayer("y", {
         },
         33: {
             unlocked() {
-                if (hasUpgrade("z", 35) ) return true
+                if (hasUpgrade("z", 35) || player.y.points.gte(1e8) ) return true
                 else return false
             },
-            title: "Danus",
-            description: "Unlocks Danus(not currently in game)",
-            cost: new Decimal(100000000),
+            title: "Flesh",
+            description: "x1e6 energy",
+            cost: new Decimal(200000000),
+        },
+        34: {
+            unlocked() {
+                if (hasUpgrade("y", 33) || player.y.points.gte(1e9) ) return true
+                else return false
+            },
+            title: "Cybersport",
+            description: "Skill boost MMR",
+            cost: new Decimal(1e9),
+            effect() {
+                return new Decimal(2).pow(player.z.micro.add(player.z.macro))
+            },
+            effectDisplay() {
+                return format(this.effect())+"x MMR"
+            },
+        },
+        35: {
+            unlocked() {
+                if (player.z.micro.gte(21)) return true
+                else return false
+            },
+            title: "Genius",
+            description: "base MMR power x1.2",
+            cost: new Decimal(1e12),
+        },
+        36: {
+            unlocked() {
+                if (hasUpgrade("y", 35) || player.y.points.gte(1e13) ) return true
+                else return false
+            },
+            title: "Time being",
+            description: "Your senses are heightened, time for you is value now",
+            cost: new Decimal(1e13),
         },
     },
     milestones: {

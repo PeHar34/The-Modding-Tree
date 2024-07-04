@@ -37,6 +37,7 @@ addLayer("k", {
     exponent() {
         exponent = 3
         if (hasUpgrade("k", 34)) exponent = 2.862
+        if (hasUpgrade("y", 35)) exponent = new Decimal(2.862).pow(1/1.2)
         return exponent
     },
     gainMult() {

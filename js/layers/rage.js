@@ -205,7 +205,7 @@ addLayer("r", {
         },
         31: {
             unlocked() { 
-                if (hasUpgrade("r", 25) & !hasUpgrade("r", 31)) return true
+                if (hasUpgrade("r", 25) & !hasUpgrade("r", 31) & !tmp.z.tabFormat.ImmortalDraft.unlocked) return true
                 else false
             },
             title: "Immortal draft",
@@ -218,6 +218,23 @@ addLayer("r", {
             onPurchase() {
                 let audio = new Audio("tp.wav")
                 audio.volume = 0.1
+                audio.play()
+            },
+        },
+        32: {
+            unlocked() { 
+                if (new Decimal(player.z.micro).gte(23)) return true
+                else false
+            },
+            title: "Danus",
+            description: "Unlocks Danus(not currently in game)",
+            cost: new Decimal("1e57000"),
+            currencyInternalName() { return "rage" },
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName() { return "rage" },
+            onPurchase() {
+                let audio = new Audio("DanusUnlock.ogg")
+                audio.volume = 0.5
                 audio.play()
             },
         },

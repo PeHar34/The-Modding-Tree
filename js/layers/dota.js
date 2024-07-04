@@ -54,7 +54,9 @@ addLayer("z", {
         line : new Decimal(0),
         late: new Decimal(0),
         win: new Decimal(0),
-        MMRGain: new Decimal(1)
+        MMRGain: new Decimal(1),
+        timeMan: new Decimal(0),
+        cd: new Decimal(0)
     }},
     canReset() { return new Decimal(player.o.points).gte(player[this.layer].getNextAt) },
     layerShown() { return player[this.layer].unlocked || hasUpgrade("o", 31) },
@@ -98,7 +100,6 @@ addLayer("z", {
         "Dota 2": {
         content: [
         "main-display",
-        "prestige-button",
         "total",
         "blank",
         "resource-display",
@@ -268,6 +269,10 @@ addLayer("z", {
                     ["clickable", "34"],
                 ]],
                 ["blank", "10px"],
+                ["clickable", "16"],
+                ["blank", "10px"],
+                ["buyable", "11"],
+                ["blank", "10px"],
                 "milestones",
             ],
             unlocked() { return hasUpgrade("r", 31) || tmp.z.tabFormat.ImmortalDraft.unlocked },
@@ -384,6 +389,29 @@ addLayer("z", {
                 if (hasUpgrade("z", 35)) data.MMRGain = data.MMRGain.times(upgradeEffect("z", 35))
                 if (hasUpgrade("y", 25)) data.MMRGain = data.MMRGain.times(20)
                 if (hasUpgrade("r", 25)) data.MMRGain = data.MMRGain.times(10)
+                if (hasUpgrade("y", 34)) data.MMRGain = data.MMRGain.times(upgradeEffect("y", 34))
+            },
+        },
+        16: {
+            display() {
+                let data = player[this.layer]
+                if (data.timeMan.eq(0)) return "On"
+                if (data.timeMan.eq(1)) return "Off"
+            },
+            canClick() { 
+                return new Decimal(player.z.cd).eq(0)
+            },
+            onClick() { 
+                let data = player[this.layer]
+                data.cd = new Decimal(5)
+                if (data.timeMan.eq(0)) {
+                    data.timeMan = new Decimal(1)
+                    player.devSpeed = new Decimal(1).div(buyableEffect("z", 11))
+                }
+                else {
+                    data.timeMan = new Decimal(0)
+                    player.devSpeed = new Decimal(1)
+                }
             },
         },
         21: {
@@ -609,6 +637,7 @@ addLayer("z", {
             if (hasUpgrade("y", 21)) data.energyGain1 = new Decimal(data.energyGain1).times(upgradeEffect("y", 21))
             if (hasUpgrade("z", 33)) data.energyGain1 = new Decimal(data.energyGain1).times(upgradeEffect("z", 33))
             if (hasUpgrade("z", 34)) data.energyGain1 = new Decimal(data.energyGain1).times(upgradeEffect("z", 34))
+            if (hasUpgrade("y", 33)) data.energyGain1 = new Decimal(data.energyGain1).times(1e6)
             data.energy = data.energy.plus(data.energyGain1)
         }
         if (data.progress2.gte(0.1)) {
@@ -620,6 +649,7 @@ addLayer("z", {
             if (hasUpgrade("y", 21)) data.energyGain2 = new Decimal(data.energyGain2).times(upgradeEffect("y", 21))
             if (hasUpgrade("z", 33)) data.energyGain2 = new Decimal(data.energyGain2).times(upgradeEffect("z", 33))
             if (hasUpgrade("z", 34)) data.energyGain2 = new Decimal(data.energyGain2).times(upgradeEffect("z", 34))
+            if (hasUpgrade("y", 33)) data.energyGain2 = new Decimal(data.energyGain2).times(1e6)
             data.energy = data.energy.plus(data.energyGain2)
             data.poopGain = new Decimal(0.03).times(data.progress2.times(10)) * diff
             if (hasUpgrade("z", 21)) data.poopGain = new Decimal(data.poopGain).div(3)
@@ -775,7 +805,11 @@ addLayer("z", {
                     data.cycle = new Decimal(0)
                 }
             }
-            if (data.realplayTime3.gte(20) ) {
+            let timeCap = new Decimal(20)
+            if (data.micro.gte(10)) timeCap = new Decimal(10)
+            if (data.micro.gte(20)) timeCap = new Decimal(4)
+            timeCap = new Decimal(timeCap).div(player.devSpeed)
+            if (data.realplayTime3.gte(timeCap) ) {
                 data.pressedButton = new Decimal(0)
                 data.expectedButton = new Decimal(0)
                 data.play3 = new Decimal(0)
@@ -788,6 +822,10 @@ addLayer("z", {
         if (hasMilestone("z", 0)) {
             let MMRlimit = new Decimal(1e10).mul(new Decimal(5).pow(player[this.layer].macro.add(player[this.layer].micro)))
             if (!player[this.layer].MMR.eq(MMRlimit)) clickClickable("z", 15)
+        }
+        if (!new Decimal(data.cd).eq(0)) {
+            data.cd = new Decimal(data.cd).sub(new Decimal(0.1).div(player.devSpeed))
+            if (new Decimal(data.cd).lte(0)) data.cd = new Decimal(0)
         }
     },
     upgrades: {
@@ -949,6 +987,37 @@ addLayer("z", {
             requirementDescription: "Micro level 5",
             effectDescription: "Auto play Dota",
             done() { return player.z.micro.gte(5) },
+        },
+    },
+    buyables: {
+        11: {
+            title: "Time being",
+            unlocked() {
+                if (hasUpgrade("y", 36)) return true
+                else return hasUpgrade("y", 36)
+            },
+            cost(x) { 
+                return new Decimal(50).mul(new Decimal(x).add(1)) 
+            },
+            display() { return "Waste your acts to slow down time" },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            purchaseLimit() {
+                return new Decimal(10)
+            },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { 
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Acts\n\
+                Amount: " + player[this.layer].buyables[this.id] + "/"+new Decimal(10)+"\n\
+                Slow down time by  " + format(data.effect) + "x"
+            },
+            effect(x) { 
+                return new Decimal(1.15).pow(x)
+            }, 
+            effectDisplay(x) { return format(buyableEffect(this.layer, this.id))+"x" },
         },
     },
 })
